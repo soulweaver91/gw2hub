@@ -1,0 +1,124 @@
+<div class="main-box panel panel-default" id="main_box_account">
+    <div id="account_name" class="panel-heading"><h2>{{account.name}}.{{account.idnum}}</h2></div>
+    <div class="panel-body">
+        <div class="section" id="account_ap">
+            <h2>Achievement points</h2>
+            <div class="row">
+                <div class="col-xs-4" id="account_ap_total">
+                    <span class="ap-icon">{{account.ap.permanent + account.ap.historical + account.ap.daily + account.ap.monthly | number}}</span>
+                </div>
+                <div class="col-xs-8" id="account_ap_breakdown">
+                    <p id="account_ap_perm">Permanent: <span class="ap-icon">{{account.ap.permanent | number}}</span></p>
+                    <p id="account_ap_hist">Historical: <span class="ap-icon">{{account.ap.historical | number}}</span></p>
+                    <p id="account_ap_daily">Dailies: <span class="ap-icon">{{account.ap.daily | number}}</span></p>
+                    <p id="account_ap_monthly">Monthlies: <span class="ap-icon">{{account.ap.monthly | number}}</span></p>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="account_bonuses">
+            <h2>Account bonuses</h2>
+            <div class="row">
+                <p class="col-xs-3" id="account_bonus_gold">
+                    <span class="hub-icon coin-icon"></span>
+                    Gold +{{account.bonuses.gold}}%
+                </p>
+                <p class="col-xs-3" id="account_bonus_karma">
+                    <span class="hub-icon karma-icon"></span>
+                    Karma +{{account.bonuses.karma}}%
+                </p>
+                <p class="col-xs-3" id="account_bonus_xp">
+                    <span class="hub-icon xp-icon"></span>
+                    XP +{{account.bonuses.xp}}%
+                </p>
+                <p class="col-xs-3" id="account_bonus_mf">
+                    <span class="hub-icon mf-icon"></span>
+                    MF +{{account.bonuses.mf + account.luck.level}}%
+                </p>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" id="account_bonus_luck">
+                    <div class="progress" id="account_bonus_luck_bar">
+                        <div class="progress-bar progress-bar-warning"
+                             ng-style="{width: (100 * account.luck.progress / account.luck.next).toFixed(2) + '%'}">
+                        </div>
+                    </div>
+                    <span class="progress-legend" id="account_bonus_luck_value">
+                        Luck +{{account.luck.level}}%:
+                        {{account.luck.progress | number}} / {{account.luck.next | number}}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="section" id="account_wvw">
+            <h2>World versus World</h2>
+            Rank {{account.wvw.rank}}: {{rankName(account.wvw.rank)}}
+            <div class="progress" id="account_wxp_bar">
+                <div class="progress-bar progress-bar-default"
+                     ng-style="{width: (100 * account.wvw.progress / 5000).toFixed(2) + '%'}">
+                </div>
+            </div>
+            <span class="progress-legend" id="account_wxp_value">{{account.wvw.progress | number}} / 5,000 WXP</span>
+        </div>
+        <div class="section" id="account_medals">
+            <h2>Account medals</h2>
+            <div class="row">
+                <div class="col-xs-12" ng-class="'rank-' + account.world.rank" id="account_medal_world">
+                    <span class="rank-icon"></span>
+                    <div class="progress" id="account_medal_world_bar">
+                        <div class="progress-bar progress-bar-success"
+                             ng-style="{width: (account.world.progress).toFixed(2) + '%'}">
+                        </div>
+                    </div>
+                    <span class="progress-legend" id="account_medal_world_label">World Completion</span>
+                    <span class="progress-legend" id="account_medal_world_value">{{account.world.progress}}%</span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" ng-class="'rank-' + account.pvp.rank" id="account_medal_pvp">
+                    <span class="rank-icon"></span>
+                    <div class="progress" id="account_medal_pvp_bar">
+                        <div class="progress-bar progress-bar-success"
+                             ng-style="{width: (100 * account.pvp.progress / account.pvp.next).toFixed(2) + '%'}">
+                        </div>
+                    </div>
+                    <span class="progress-legend" id="account_medal_pvp_label">PvP Rank: Rabbit</span>
+                    <span class="progress-legend" id="account_medal_pvp_value">
+                        {{account.pvp.progress | number}} / {{account.pvp.next | number}} rank points
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12" ng-class="'rank-' + account.wvw.medal.rank" id="account_medal_wvw">
+                    <span class="rank-icon"></span>
+                    <div class="progress" id="account_medal_wvw_bar">
+                        <div class="progress-bar progress-bar-success"
+                             ng-style="{width: (100 * account.wvw.medal.progress / account.wvw.medal.next).toFixed(2) + '%'}">
+                        </div>
+                    </div>
+                    <span class="progress-legend" id="account_medal_wvw_label">Realm Avenger</span>
+                    <span class="progress-legend" id="account_medal_wvw_value">
+                        {{account.wvw.medal.progress | number}} of {{account.wvw.medal.next | number}} kills
+                    </span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-3" ng-class="{'rank-0': !account.orders.priory,   'rank-1': account.orders.priory  }" id="account_medal_priory">
+                    <span class="rank-icon"></span>
+                    Durmand Priory
+                </div>
+                <div class="col-xs-3" ng-class="{'rank-0': !account.orders.vigil,    'rank-1': account.orders.vigil   }" id="account_medal_vigil">
+                    <span class="rank-icon"></span>
+                    Vigil
+                </div>
+                <div class="col-xs-3" ng-class="{'rank-0': !account.orders.whispers, 'rank-1': account.orders.whispers}" id="account_medal_whispers">
+                    <span class="rank-icon"></span>
+                    Order of Whispers
+                </div>
+                <div class="col-xs-3" ng-class="{'rank-0': !account.legendary,       'rank-1': account.legendary      }" id="account_medal_legendary">
+                    <span class="rank-icon"></span>
+                    Legendary Treasures
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

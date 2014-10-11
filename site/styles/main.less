@@ -1,0 +1,216 @@
+@import '../../bower_components/bootstrap/less/bootstrap.less';
+
+@font-face {
+  font-family: 'GW2 Hub Symbols';
+  src: url('static/hubsymbols.ttf');
+}
+
+@bold-accent: #9d1011;
+@bold-accent-secondary: #ffffff;
+@bold-accent-border: darken(@bold-accent, 10%);
+
+@gold-color: #d3a222;
+@silver-color: #8d8d8d;
+@copper-color: #80211d;
+@karma-color: #6e0ea0;
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  padding-top: 70px;
+
+  h1 {
+    font-weight: normal;
+  }
+}
+
+.navbar.navbar-default {
+  background: @bold-accent none;
+  color: @bold-accent-secondary;
+  border-width: 0;
+
+  li {
+    > a, span {
+      color: @bold-accent-secondary;
+
+      &:hover {
+        color: @bold-accent-secondary;
+      }
+    }
+
+    > a:hover {
+      background-color: lighten(@bold-accent, 10%);
+    }
+  }
+}
+
+.progress {
+  margin-bottom: 0;
+
+  + .progress-legend {
+    text-align: center;
+    display: block;
+    width: 100%;
+  }
+}
+
+.panel-default {
+  border-color: @bold-accent-border;
+
+  > .panel-heading {
+    background: @bold-accent none;
+    color: @bold-accent-secondary;
+
+    h2 {
+      margin: 0;
+      font-size: 160%;
+      text-align: center;
+      font-variant: small-caps;
+    }
+  }
+}
+
+.main-big-nav {
+  button {
+    display: block;
+    width: 20em;
+    padding: 1em;
+    font-size: 16pt;
+    color: black;
+    border: 1px solid gray;
+    background-color: lightblue;
+    margin: -1px auto 0;
+
+    &:first-child {
+      border-top-left-radius: .5em;
+      border-top-right-radius: .5em;
+    }
+    &:last-child {
+      border-bottom-left-radius: .5em;
+      border-bottom-right-radius: .5em;
+    }
+  }
+}
+
+#account_ap_total {
+  font-size: 250%;
+}
+#account_ap_breakdown {
+  -webkit-column-count: 2;
+  -moz-column-count: 2;
+  column-count: 2;
+}
+
+#account_medals .row > div {
+  text-align: center;
+  background-repeat: no-repeat;
+  background-position: left center;
+  background-size: 45px 45px;
+  min-height: 45px;
+  font-size: 80%;
+
+  &.rank-0 {
+    text-decoration: line-through;
+    color: #999;
+
+    .rank-icon {
+      color: #999;
+    }
+  }
+
+  .rank-icon {
+    float: left;
+    height: 45px;
+    width: 45px;
+    text-align: center;
+    display: inline-block;
+    font-size: 500%;
+    font-family: 'GW2 Hub Symbols';
+    line-height: 45px;
+  }
+}
+
+#main_box_account {
+  .section h2 {
+    font-size: 110%;
+    border-bottom: 1px solid black;
+  }
+}
+
+#account_medal_priory   .rank-icon:before { content: '\e002'; }
+#account_medal_vigil    .rank-icon:before { content: '\e003'; }
+#account_medal_whispers .rank-icon:before { content: '\e004'; }
+
+// temp
+#account_medal_pvp       .rank-icon:before { content: '\e001'; }
+#account_medal_legendary .rank-icon:before { content: '\e001'; }
+#account_medal_wvw       .rank-icon:before { content: '\e001'; }
+#account_medal_world     .rank-icon:before { content: '\e001'; }
+
+.coin {
+  .coin-gold:after   { .hub-icon; content: '\e005'; color: #d3a222; }
+  .coin-silver:after { .hub-icon; content: '\e005'; color: #8d8d8d; }
+  .coin-copper:after { .hub-icon; content: '\e005'; color: #80211d; }
+}
+
+.hub-icon {
+  font-family: 'GW2 Hub Symbols';
+}
+.coin-icon:before  { content: '\e005'; }
+.karma-icon:before { content: '\e006'; }
+.xp-icon:before    { content: '\e007'; }
+.mf-icon:before    { content: '\e008'; }
+
+.latest-screen {
+  width: 100%;
+}
+
+.latest-ap {
+  .latest-ap-title {
+    margin: 0;
+  }
+  .latest-ap-box {
+    float: left;
+    width: 6em;
+    height: 6em;
+    position: relative;
+    border: 1px solid gray;
+
+    .latest-ap-tier, .latest-ap-value {
+      position: absolute;
+      font-size: 75%;
+      letter-spacing: -1px;
+      text-align: center;
+      display: block;
+      width: 100%;
+    }
+    .latest-ap-tier {
+      top: 0;
+    }
+    .latest-ap-value {
+      bottom: 0;
+    }
+  }
+
+  .latest-ap-points {
+    float: right;
+  }
+
+  .latest-ap-flavor {
+    font-style: italic;
+  }
+}
+
+.ap-icon:after {
+  font-family: 'GW2 Hub Symbols';
+  content: '\e001';
+}
+
+#account_ap, #account_bonuses {
+  p {
+    margin: 0;
+  }
+}
+
+#main_box_tagcloud .tag {
+  margin: 0 .5em;
+}

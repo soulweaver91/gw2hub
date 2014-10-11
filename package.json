@@ -1,0 +1,33 @@
+{
+  "name": "gw2hub",
+  "version": "0.0.1",
+  "description": "Guild Wars 2 general information display site",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Soulweaver",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^0.9.0",
+    "bcrypt": "^0.8.0",
+    "body-parser": "^1.8.1",
+    "coffee-script": "^1.8.0",
+    "cookie-parser": "^1.3.3",
+    "express": "^4.9.0",
+    "express-session": "^1.8.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-copy": "^0.5.0",
+    "grunt-contrib-less": "^0.11.4",
+    "grunt-contrib-uglify": "^0.6.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-express": "1.4.0",
+    "grunt-newer": "^0.7.0",
+    "lodash": "^2.4.1",
+    "powerbuild": "0.0.11",
+    "q": "^1.0.1",
+    "sqlite3": "^2.2.7"
+  }
+}

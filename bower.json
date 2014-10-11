@@ -1,0 +1,23 @@
+{
+  "name": "gw2hub",
+  "version": "0.0.1",
+  "authors": [
+    "Soulweaver <soulweaver@hotmail.fi>"
+  ],
+  "license": "ISC",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.2.25",
+    "angular-ui-router": "~0.2.11",
+    "bootstrap": "~3.2.0",
+    "restangular": "~1.4.0",
+    "lodash": "~2.4.1"
+  }
+}
