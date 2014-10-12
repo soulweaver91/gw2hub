@@ -38,6 +38,10 @@ for safety reasons. The file should be a single export in the form of
 
 Finally, review the contents of `settings.coffee` and change the values to suit your own use.
 
+Once you have the software running, remember to log in as the default user and change its password. The default
+credentials are `user@db` as email and `default` as password. You might want to replace the email with a less generic
+one instead, too; just create a new admin user, log in as that user, and delete the default one.
+
 Usage
 -----
 Run the API server from the command line:
