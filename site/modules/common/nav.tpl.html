@@ -1,4 +1,4 @@
-<div class="navbar navbar-default navbar-fixed-top">
+<div class="navbar navbar-default navbar-fixed-top" ng-controller="navbarController">
     <ul class="nav navbar-nav">
         <li><span class="navbar-brand">GW2 Hub</span></li>
         <li><a href="#" ui-sref="gallery.year">Gallery</a></li>
@@ -10,16 +10,27 @@
     </ul>
 
     <div class="navbar-right">
-        <ul class="nav navbar-nav">
-            <li><a href="#">Log in</a></li>
-        </ul>
-        <form class="navbar-form">
-            <div class="form-group hidden">
-                <span>Log in</span>
-                <input class="form-control input-sm" type="text" placeholder="E-mail">
-                <input class="form-control input-sm" type="password" placeholder="Password">
+        <form class="navbar-form" name="loginForm" ng-if="user == null" novalidate>
+            <div class="form-group">
+                <input class="form-control input-sm" ng-model="credentials.email" required type="text" placeholder="E-mail">
+                <input class="form-control input-sm" ng-model="credentials.pass" required type="password" placeholder="Password">
+                <input type="submit" ng-hide="true" ng-click="login()">
             </div>
         </form>
+        <ul class="nav navbar-nav" ng-if="user == null">
+            <li>
+                <a href="#" ng-click="login()" ng-disabled="loginForm.$invalid">Log in</a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav" ng-if="user != null">
+            <li>
+                <span>Hello, {{user.name}} ({{user.email}})</span>
+                <span>Ulevel={{user.ulevel}}</span>
+            </li>
+            <li>
+                <a href="#" ng-click="logout()">Log out</a>
+            </li>
+        </ul>
     </div>
 
 </div>
