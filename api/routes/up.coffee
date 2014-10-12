@@ -11,7 +11,7 @@ module.exports = (app, db) ->
         , (err) ->
             if err?
                 res.status 200
-                .json { status: 'down' }
+                .json { status: 200, api_status: 'down' }
             else
                 res.status 200
-                .json { status: 'up' }
+                .json { status: 200, api_status: 'up' }
