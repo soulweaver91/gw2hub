@@ -45,7 +45,7 @@ passport.serializeUser (user, done) ->
 
 passport.deserializeUser (id, done) ->
     db.get 'SELECT * FROM tUser WHERE id = ?', id, (err, row) ->
-        done err, row
+        done err, _.omit row, ['pass']
 
 # Add passport to the server
 app.use passport.initialize()
