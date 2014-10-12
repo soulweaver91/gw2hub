@@ -28,16 +28,20 @@ body {
   color: @bold-accent-secondary;
   border-width: 0;
 
+  .navbar-form {
+    float: left;
+  }
+
   li {
-    > a, span {
+    a, span {
       color: @bold-accent-secondary;
 
-      &:hover {
+      &:hover, &:focus {
         color: @bold-accent-secondary;
       }
     }
 
-    > a:hover {
+    a:hover {
       background-color: lighten(@bold-accent, 10%);
     }
   }

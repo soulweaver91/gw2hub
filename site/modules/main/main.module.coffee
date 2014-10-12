@@ -1,4 +1,4 @@
-angular.module 'hubMain', [
+angular.module 'module.main', [
     'restangular'
 ]
 .controller 'hubMainController', [
