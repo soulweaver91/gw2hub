@@ -14,21 +14,27 @@ filenames = []
 relations = {}
 lastRun = 0
 
-getFileHashes = (paths, success, failure) ->
+getFileHashes = (paths, cb) ->
     tmpRelations = {}
+    errors = []
 
-    async.each paths, (file, done) ->
+    hashQueue = async.queue (file, done) ->
         checksum.file path.join(settings.localMediaLocation, file), (err, sum) ->
             return done err if err?
 
             console.log "Hash for '#{file}' is #{sum}"
             tmpRelations[sum] = file
             done()
-    , (err) ->
-        if err?
-            failure err
+    , settings.scannerConcurrency
+
+    hashQueue.drain = ->
+        if errors.length > 0
+            cb errors
         else
-            success tmpRelations
+            cb null, tmpRelations
+
+    hashQueue.push paths, (err) ->
+        errors.push err if err?
 
 hashIndexRows = (rows) ->
     hashes = {}
@@ -88,11 +94,15 @@ updateDatabase = (current, cb) ->
         console.log 'To be updated:'
         console.log mov
 
-        async.each _.keys(add), (hash, done) ->
+        errors = []
+
+        thumbQueue = async.queue (hash, done) ->
             generateThumb add[hash], hash, (err) ->
                 done err
-        , (err) ->
-            return cb err if err?
+        , settings.scannerConcurrency
+
+        thumbQueue.drain = ->
+            return cb err if errors.length > 0
 
             relations = current
 
@@ -116,6 +126,9 @@ updateDatabase = (current, cb) ->
             db.close()
             cb()
 
+        thumbQueue.push _.keys(add), (err) ->
+            errors.push err if err?
+
 module.exports = (grunt) ->
     grunt.registerTask 'fullScan', 'Scan and hash the media folder for new and updated files.', ->
         console.log 'Running file database update. Hashing files may take a while!'
@@ -126,7 +139,7 @@ module.exports = (grunt) ->
         }, (err, res) ->
             return success false if err?
 
-            getFileHashes res, (hashes) ->
+            getFileHashes res, (err, hashes) ->
                 filenames = _.values hashes
 
                 updateDatabase hashes, (err) ->
@@ -149,7 +162,7 @@ module.exports = (grunt) ->
             current = _.omit relations, (fname) ->
                 _.contains missingFiles, fname
 
-            getFileHashes newFiles, (hashes) ->
+            getFileHashes newFiles, (err, hashes) ->
                 # Add the new files' hash-file relations in, completing the current relation sheet
                 current = _.merge current, hashes
 
@@ -184,7 +197,7 @@ module.exports = (grunt) ->
                 current = _.omit relations, (fname) ->
                     _.contains changed, fname
 
-                getFileHashes changed, (hashes) ->
+                getFileHashes changed, (err, hashes) ->
                     # Add the new files' hash-file relations in, completing the current relation sheet
                     current = _.merge current, hashes
 
