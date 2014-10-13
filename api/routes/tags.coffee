@@ -61,10 +61,26 @@ module.exports = (app, db) ->
                     res.status 404
                     .json { status: 404, error: 'no such id' }
 
-    app.delete '/tags/:id', (req, res, next) ->
-        res.status 501
-        .json { status: 501, error: 'not yet implemented' }
-        
+    app.delete '/tags/:id'
+    , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
+    , (req, res, next) ->
+        db.get 'SELECT * FROM tTag WHERE id = ?', req.params.id, (err, row) ->
+            if err?
+                res.status 500
+                .json { status: 500, error: 'database error' }
+            else
+                if row?
+                    db.run 'DELETE FROM tTag WHERE id = ?', req.params.id, (err) ->
+                        if err?
+                            res.status 500
+                            .json { status: 500, error: 'database error' }
+                        else
+                            res.status 200
+                            .json row
+                else
+                    res.status 404
+                    .json { status: 404, error: 'no such id' }
+
     app.patch '/tags/:id', (req, res, next) ->
         res.status 501
         .json { status: 501, error: 'not yet implemented' }
