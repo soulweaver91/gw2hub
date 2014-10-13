@@ -39,6 +39,7 @@ module.exports = (grunt) ->
 
             CREATE TABLE tFile (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
+                hash TEXT NOT NULL,
                 locator TEXT,
                 name TEXT,
                 description TEXT,
@@ -47,11 +48,11 @@ module.exports = (grunt) ->
             );
 
             CREATE TABLE tFileTagRel (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                file INTEGER,
-                tag INTEGER,
+                file INTEGER NOT NULL,
+                tag INTEGER NOT NULL,
                 FOREIGN KEY (file) REFERENCES tFile (id) ON DELETE CASCADE,
-                FOREIGN KEY (tag) REFERENCES tTag (id) ON DELETE CASCADE
+                FOREIGN KEY (tag) REFERENCES tTag (id) ON DELETE CASCADE,
+                PRIMARY KEY (file, tag)
             );
         '''
 
