@@ -13,6 +13,7 @@ security = require './tools/security'
 
 sqlite = require 'sqlite3'
 db = new sqlite.Database settings.database
+db.exec "PRAGMA foreign_keys = ON;"
 
 app = express()
 server = http.createServer app

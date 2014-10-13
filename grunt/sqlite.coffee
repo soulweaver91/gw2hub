@@ -5,6 +5,7 @@ q = require 'q'
 
 settings = require('../settings').get()
 security = require '../api/tools/security'
+privilegeLevels = require '../api/tools/privilegelevels'
 
 module.exports = (grunt) ->
     grunt.registerTask 'deleteDB', 'Deletes the database file used by the current profile', ->
@@ -77,10 +78,10 @@ module.exports = (grunt) ->
                 INSERT INTO tUser (email, name, ulevel, pass) VALUES (
                     "user@db",
                     "Default User",
-                    3,
+                    ?,
                     ?
                 );
-                ''', hashed
+                ''', privilegeLevels.admin, hashed
                 .then (err) ->
                     if err?
                         userCreated.reject()
