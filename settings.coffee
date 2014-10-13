@@ -25,6 +25,7 @@ settings = {
         APIAddress: 'http://soul-weaver.tk'
         siteAddress: 'http://soul-weaver.tk'
         saltRounds: 12
+        scannerConcurrency: 20
 }
 
 effectiveSettings = null
