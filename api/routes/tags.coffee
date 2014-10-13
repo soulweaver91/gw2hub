@@ -18,20 +18,13 @@ module.exports = (app, db) ->
     app.post '/tags'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
     , (req, res, next) ->
-        {
-            name,
-            parent,
-            icon,
-            priority
-        } = req.body
-
-        if !name?
+        if !req.body.name?
             res.status 400
             .json { status: 400, error: 'name field missing' }
             return
 
         db.run 'INSERT INTO tTag (name, parent, icon, priority) VALUES (?, ?, ?, ?)',
-            name, parent, icon, priority, (err) ->
+            req.body.name, req.body.parent, req.body.icon, req.body.priority, (err) ->
                 if err?
                     if err.code == 'SQLITE_CONSTRAINT'
                         res.status 400
