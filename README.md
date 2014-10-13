@@ -12,8 +12,10 @@ questions on its usage.
 
 Installing
 ----------
-The API runs on [node.js](http://nodejs.org/), so if you don't have it installed, do that first. Also, if you don't yet
-have grunt or bower installed globally, install them now:
+The API runs on [node.js](http://nodejs.org/), so if you don't have it installed, do that first. You will also need
+to install [GraphicsMagick](http://www.graphicsmagick.org/) and make sure it's in your PATH.
+
+If you don't yet have grunt or bower installed globally, install them now:
 
     npm install -g grunt-cli
     npm install -g bower

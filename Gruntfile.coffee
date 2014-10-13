@@ -85,7 +85,7 @@ module.exports = (grunt) ->
 
         clean:
             intermediate: ['intermediate/*', '!intermediate/.gitignore']
-            site: ['release/' + settings.deployDir + '/*']
+            site: ['release/' + settings.deployDir + '/*', '!**/cache']
 
         watch:
             uiStyles:

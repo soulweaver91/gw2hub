@@ -6,6 +6,7 @@ sqlite = require 'sqlite3'
 _ = require 'lodash'
 checksum = require 'checksum'
 moment = require 'moment'
+gm = require 'gm'
 
 settings = require('../settings').get()
 
@@ -35,6 +36,22 @@ hashIndexRows = (rows) ->
         hashes[data.hash] = data.locator
 
     return hashes
+
+generateThumb = (fname, hash, cb) ->
+    # Create the cache folder if it doesn't exist yet
+    fs.mkdir path.join('release', settings.deployDir, 'cache'), (err) ->
+        if err?
+            return cb err if err.code != 'EEXIST'
+
+        if path.extname(fname) == '.jpg'
+            console.log "Generating a thumbnail for #{fname}"
+            gm(path.join settings.localMediaLocation, fname)
+            .resize 200
+            .quality 90
+            .write path.join('release', settings.deployDir, 'cache', "th_#{hash}.jpg"), (err) ->
+                cb err
+        else
+            cb()
 
 updateDatabase = (current, cb) ->
     lastRun = moment().valueOf()
@@ -71,27 +88,33 @@ updateDatabase = (current, cb) ->
         console.log 'To be updated:'
         console.log mov
 
-        relations = current
+        async.each _.keys(add), (hash, done) ->
+            generateThumb add[hash], hash, (err) ->
+                done err
+        , (err) ->
+            return cb err if err?
 
-        db.parallelize ->
-            stmtAdd = db.prepare "INSERT INTO tFile (hash, locator, name, size, timestamp) VALUES (?, ?, ?, ?, ?)"
-            _.each add, (fname, hash) ->
-                stats = fs.statSync path.join settings.localMediaLocation, fname
-                stmtAdd.run hash, fname, fname, stats.size, Math.min(stats.ctime.getTime(), stats.mtime.getTime())
-            stmtAdd.finalize()
+            relations = current
 
-            stmtDel = db.prepare "DELETE FROM tFile WHERE hash = ?"
-            _.each del, (hash) ->
-                stmtDel.run hash
-            stmtDel.finalize()
+            db.parallelize ->
+                stmtAdd = db.prepare "INSERT INTO tFile (hash, locator, name, size, timestamp) VALUES (?, ?, ?, ?, ?)"
+                _.each add, (fname, hash) ->
+                    stats = fs.statSync path.join settings.localMediaLocation, fname
+                    stmtAdd.run hash, fname, fname, stats.size, Math.min(stats.ctime.getTime(), stats.mtime.getTime())
+                stmtAdd.finalize()
 
-            stmtMov = db.prepare "UPDATE tFile SET locator = ? WHERE hash = ?"
-            _.each mov, (fname, hash) ->
-                stmtMov.run fname, hash
-            stmtMov.finalize()
+                stmtDel = db.prepare "DELETE FROM tFile WHERE hash = ?"
+                _.each del, (hash) ->
+                    stmtDel.run hash
+                stmtDel.finalize()
 
-        db.close()
-        cb()
+                stmtMov = db.prepare "UPDATE tFile SET locator = ? WHERE hash = ?"
+                _.each mov, (fname, hash) ->
+                    stmtMov.run fname, hash
+                stmtMov.finalize()
+
+            db.close()
+            cb()
 
 module.exports = (grunt) ->
     grunt.registerTask 'fullScan', 'Scan and hash the media folder for new and updated files.', ->
@@ -106,8 +129,8 @@ module.exports = (grunt) ->
             getFileHashes res, (hashes) ->
                 filenames = _.values hashes
 
-                updateDatabase hashes, ->
-                    success true
+                updateDatabase hashes, (err) ->
+                    success !err?
 
 
     grunt.registerTask 'listChangedScan', 'Scan added, deleted and moved files and update the database.', ->
@@ -133,8 +156,8 @@ module.exports = (grunt) ->
                 # Update the filename cache
                 filenames = _.values current
 
-                updateDatabase current, ->
-                    success true
+                updateDatabase current, (err) ->
+                    success !err?
 
     grunt.registerTask 'filesModifiedScan', 'Rehash modified files and update the database.', ->
         success = @async()
@@ -168,6 +191,6 @@ module.exports = (grunt) ->
                     # Update the filename cache
                     filenames = _.values current
 
-                    updateDatabase current, ->
-                        success true
+                    updateDatabase current, (err) ->
+                        success !err?
         return
