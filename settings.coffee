@@ -6,10 +6,14 @@ settings = {
         deployDir: 'dev'
         APIPort: 12500
         database: 'db/dev.sqlite'
+        localMediaLocation: '../gw2s_test/'
+        remoteMediaLocation: '/gw2s/'
     prod:
         deployDir: 'prod'
         APIPort: 12501
         database: 'db/prod.sqlite'
+        localMediaLocation: '../XAMPP/htdocs/gw2s/'
+        remoteMediaLocation: '/gw2s/'
     common:
         vendorScripts: [
             'bower_components/angular/angular.js'
