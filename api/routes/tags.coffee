@@ -4,6 +4,7 @@ privilegeLevels = require '../tools/privilegelevels'
 
 module.exports = (app, db) ->
     app.options '/tags', options ['GET', 'POST']
+    app.options '/tags/:id', options ['GET', 'PATCH', 'DELETE']
 
     app.get '/tags', (req, res, next) ->
         db.all 'SELECT * FROM tTag', (err, rows) ->
@@ -46,3 +47,24 @@ module.exports = (app, db) ->
                         else
                             res.status 200
                             .json row
+
+    app.get '/tags/:id', (req, res, next) ->
+        db.get 'SELECT * FROM tTag WHERE id = ?', req.params.id, (err, row) ->
+            if err?
+                res.status 500
+                .json { status: 500, error: 'database error' }
+            else
+                if row?
+                    res.status 200
+                    .json row
+                else
+                    res.status 404
+                    .json { status: 404, error: 'no such id' }
+
+    app.delete '/tags/:id', (req, res, next) ->
+        res.status 501
+        .json { status: 501, error: 'not yet implemented' }
+        
+    app.patch '/tags/:id', (req, res, next) ->
+        res.status 501
+        .json { status: 501, error: 'not yet implemented' }
