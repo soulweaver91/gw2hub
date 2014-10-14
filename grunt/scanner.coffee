@@ -45,6 +45,10 @@ hashIndexRows = (rows) ->
 
 generateThumb = (fname, hash, cb) ->
     # Create the cache folder if it doesn't exist yet
+    if fs.existsSync path.join('release', settings.deployDir, 'cache', "th_#{hash}.jpg")
+        console.log "Thumbnail for #{fname} already exists, skipping..."
+        return cb()
+
     fs.mkdir path.join('release', settings.deployDir, 'cache'), (err) ->
         if err?
             return cb err if err.code != 'EEXIST'
@@ -67,8 +71,6 @@ updateDatabase = (current, cb) ->
         return success false if err?
 
         previous = hashIndexRows rows
-        console.log 'Existing entries from database:'
-        console.log previous
 
         # Find hashes new to the db
         addHashes = _.difference _.keys(current), _.keys(previous)
@@ -87,13 +89,6 @@ updateDatabase = (current, cb) ->
         _.each addHashes, (key) ->
             add[key] = current[key]
 
-        console.log 'To be added:'
-        console.log add
-        console.log 'To be deleted:'
-        console.log del
-        console.log 'To be updated:'
-        console.log mov
-
         errors = []
 
         thumbQueue = async.queue (hash, done) ->
@@ -102,9 +97,13 @@ updateDatabase = (current, cb) ->
         , settings.scannerConcurrency
 
         thumbQueue.drain = ->
-            return cb err if errors.length > 0
+            return cb errors if errors.length > 0
 
             relations = current
+
+            console.log "Now syncing database... (adding #{_.keys(add).length}, removing #{del.length}, updating #{_.keys(mov).length})"
+            if _.keys(add).length + del.length + _.keys(mov).length > 100
+                console.log "Seems like there are quite a bit of changes, so this may take some time."
 
             db.parallelize ->
                 stmtAdd = db.prepare "INSERT INTO tFile (hash, locator, name, size, timestamp) VALUES (?, ?, ?, ?, ?)"
@@ -123,15 +122,14 @@ updateDatabase = (current, cb) ->
                     stmtMov.run fname, hash
                 stmtMov.finalize()
 
-            db.close()
-            cb()
+            db.close cb
 
         thumbQueue.push _.keys(add), (err) ->
             errors.push err if err?
 
 module.exports = (grunt) ->
     grunt.registerTask 'fullScan', 'Scan and hash the media folder for new and updated files.', ->
-        console.log 'Running file database update. Hashing files may take a while!'
+        console.log 'Running a folder-wide scan for file changes...'
         success = @async()
 
         glob '*.+(jpg|mp4)', {
@@ -140,6 +138,8 @@ module.exports = (grunt) ->
             return success false if err?
 
             getFileHashes res, (err, hashes) ->
+                return success false if err?
+
                 filenames = _.values hashes
 
                 updateDatabase hashes, (err) ->
@@ -163,6 +163,8 @@ module.exports = (grunt) ->
                 _.contains missingFiles, fname
 
             getFileHashes newFiles, (err, hashes) ->
+                return success false if err?
+
                 # Add the new files' hash-file relations in, completing the current relation sheet
                 current = _.merge current, hashes
 
@@ -198,6 +200,8 @@ module.exports = (grunt) ->
                     _.contains changed, fname
 
                 getFileHashes changed, (err, hashes) ->
+                    return success false if err?
+
                     # Add the new files' hash-file relations in, completing the current relation sheet
                     current = _.merge current, hashes
 
@@ -206,4 +210,3 @@ module.exports = (grunt) ->
 
                     updateDatabase current, (err) ->
                         success !err?
-        return

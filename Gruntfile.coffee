@@ -97,20 +97,18 @@ module.exports = (grunt) ->
             uiScripts:
                 files: ['site/**/*.html','site/**/*.coffee']
                 tasks: ['build']
-            media:
-                files: ['*.jpg', '*.mp4']
-                tasks: ['listChangedScan']
-                options:
-                    cwd: settings.localMediaLocation
-                    event: ['renamed', 'added', 'deleted']
-                    spawn: false
-            mediaChanged:
-                files: ['*.jpg', '*.mp4']
-                tasks: ['filesModifiedScan']
-                options:
-                    cwd: settings.localMediaLocation
-                    event: ['changed']
-                    spawn: false
+            #media:
+            #    files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
+            #    tasks: ['listChangedScan']
+            #    options:
+            #        event: ['renamed', 'added', 'deleted']
+            #        spawn: false
+            #mediaChanged:
+            #    files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
+            #    tasks: ['filesModifiedScan']
+            #    options:
+            #        event: ['changed']
+            #        spawn: false
 
         html2js:
             options:
@@ -131,6 +129,6 @@ module.exports = (grunt) ->
     # The point of using an intermediate folder is that if the build fails, the live folder won't end up in a broken state
     grunt.registerTask 'build', ['clean:intermediate', 'powerbuild:site', 'uglify:site', 'html2js:site', 'createEnv',
                                  'less', 'copy:static', 'clean:site', 'copy:site']
-    grunt.registerTask 'runAPI', ['build', 'express:api', 'fullScan', 'express-keepalive']
-    grunt.registerTask 'develop', ['build', 'express:api', 'fullScan', 'watch']
+    grunt.registerTask 'runAPI', ['build', 'fullScan', 'express:api', 'express-keepalive']
+    grunt.registerTask 'develop', ['build', 'fullScan', 'express:api', 'watch']
 
