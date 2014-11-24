@@ -75,6 +75,13 @@ module.exports = (grunt) ->
                     src: ['index.html', 'static/*']
                     dest: 'intermediate'
                 ]
+            vendorFonts:
+                files: [
+                    expand: true
+                    src: ['bower_components/bootstrap/fonts/*']
+                    dest: 'intermediate/static'
+                    flatten: true
+                ]
             site:
                 files: [
                     expand: true
@@ -128,7 +135,7 @@ module.exports = (grunt) ->
 
     # The point of using an intermediate folder is that if the build fails, the live folder won't end up in a broken state
     grunt.registerTask 'build', ['clean:intermediate', 'powerbuild:site', 'uglify:site', 'html2js:site', 'createEnv',
-                                 'less', 'copy:static', 'clean:site', 'copy:site']
+                                 'less', 'copy:static', 'copy:vendorFonts', 'clean:site', 'copy:site']
     grunt.registerTask 'runAPI', ['build', 'fullScan', 'express:api', 'express-keepalive']
     grunt.registerTask 'develop', ['build', 'fullScan', 'express:api', 'watch']
 

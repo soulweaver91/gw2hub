@@ -4,6 +4,7 @@ angular.module 'gw2hub', [
     'restangular'
     'module.common'
     'module.main'
+    'module.gallery'
     'service.auth'
 ]
 .config [
@@ -14,6 +15,8 @@ angular.module 'gw2hub', [
             url: '/'
             templateUrl: 'modules/main/main.tpl.html'
             controller: 'hubMainController'
+        .state 'future',
+            templateUrl: 'modules/common/future.tpl.html'
 
         $urlRouterProvider.otherwise '/'
 
@@ -25,7 +28,13 @@ angular.module 'gw2hub', [
         }
 ]
 .run [
-    'authService',
-    (authService) ->
+    'authService', '$rootScope', '$state'
+    (authService, $rootScope, $state) ->
         authService.update()
+
+        moment.locale 'en'
+
+        $rootScope.$on '$stateNotFound', (event) ->
+            event.preventDefault()
+            $state.go 'future'
 ]

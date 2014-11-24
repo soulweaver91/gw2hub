@@ -1,5 +1,7 @@
 @import '../../bower_components/bootstrap/less/bootstrap.less';
 
+@icon-font-path: "static/";
+
 @font-face {
   font-family: 'GW2 Hub Symbols';
   src: url('static/hubsymbols.ttf');
@@ -14,13 +16,24 @@
 @copper-color: #80211d;
 @karma-color: #6e0ea0;
 
+html {
+  height: 100%;
+}
+
 body {
   font-family: 'Segoe UI', sans-serif;
-  padding-top: 70px;
+  height: 100%;
 
   h1 {
     font-weight: normal;
   }
+}
+
+.wrapper {
+  min-height: 100%;
+  position: relative;
+  padding-top: 70px;
+  padding-bottom: 4em;
 }
 
 .navbar.navbar-default {
@@ -55,6 +68,17 @@ body {
     display: block;
     width: 100%;
   }
+}
+
+footer {
+  background-color: @bold-accent;
+  color: @bold-accent-secondary;
+  padding: 1.25em;
+  line-height: 1.5em;
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 4em;
 }
 
 .panel-default {
@@ -217,4 +241,86 @@ body {
 
 #main_box_tagcloud .tag {
   margin: 0 .5em;
+}
+
+.gallery-nav-panel {
+  text-align: center;
+}
+
+.gallery-item-container {
+  padding: 0;
+
+  .gallery-item {
+    margin: .5em;
+    border: 1px solid @bold-accent-border;
+    position: relative;
+
+    a {
+      cursor: pointer;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    span {
+      display: block;
+      padding: 0 .5em;
+      font-size: 85%;
+
+      &.gallery-item-name {
+        background-color: @bold-accent;
+        color: @bold-accent-secondary;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.navtree_branch {
+  .navtree_root > & {
+    .panel;
+    .panel-default;
+    padding: .25em;
+    margin: 0 -15px;
+  }
+
+
+  .navtree_toggler {
+    cursor: pointer;
+  }
+
+  .navtree_children {
+    margin-left: 1.25em;
+  }
+
+  .navtree_title {
+    position: relative;
+    padding: 0 .5em;
+
+    .navtree_count {
+      float: right;
+
+      &:before {
+        content: '(';
+      }
+      &:after {
+        content: ')';
+      }
+    }
+
+    a {
+      color: black;
+    }
+  }
+
+  .navtree_active > .navtree_title {
+    background-color: @bold-accent;
+    color: @bold-accent-secondary;
+    border-radius: .5em;
+
+    a {
+      color: white;
+    }
+  }
 }

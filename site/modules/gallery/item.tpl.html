@@ -1,0 +1,8 @@
+<div class="col-lg-3 col-md-4 col-sm-6 col-xs-4 gallery-item-container">
+    <div class="gallery-item">
+        <span class="gallery-item-name">{{image.name}}</span>
+        <a ng-click="openImg()"><img ng-src="{{'cache/th_' + image.hash + '.jpg'}}"></a>
+        <span>{{image.size | filesize}}</span>
+        <span>{{image.friendlyDate}}</span>
+    </div>
+</div>
