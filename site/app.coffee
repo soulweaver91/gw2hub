@@ -4,6 +4,7 @@ angular.module 'gw2hub', [
     'restangular'
     'module.common'
     'module.main'
+    'module.gallery'
     'service.auth'
 ]
 .config [
@@ -28,4 +29,6 @@ angular.module 'gw2hub', [
     'authService',
     (authService) ->
         authService.update()
+
+        moment.locale 'en'
 ]

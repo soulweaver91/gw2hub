@@ -1,4 +1,5 @@
 @import '../../bower_components/bootstrap/less/bootstrap.less';
+
 @icon-font-path: "static/";
 
 @font-face {
@@ -218,4 +219,86 @@ body {
 
 #main_box_tagcloud .tag {
   margin: 0 .5em;
+}
+
+.gallery-nav-panel {
+  text-align: center;
+}
+
+.gallery-item-container {
+  padding: 0;
+
+  .gallery-item {
+    margin: .5em;
+    border: 1px solid @bold-accent-border;
+    position: relative;
+
+    a {
+      cursor: pointer;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    span {
+      display: block;
+      padding: 0 .5em;
+      font-size: 85%;
+
+      &.gallery-item-name {
+        background-color: @bold-accent;
+        color: @bold-accent-secondary;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.navtree_branch {
+  .navtree_root > & {
+    .panel;
+    .panel-default;
+    padding: .25em;
+    margin: 0 -15px;
+  }
+
+
+  .navtree_toggler {
+    cursor: pointer;
+  }
+
+  .navtree_children {
+    margin-left: 1.25em;
+  }
+
+  .navtree_title {
+    position: relative;
+    padding: 0 .5em;
+
+    .navtree_count {
+      float: right;
+
+      &:before {
+        content: '(';
+      }
+      &:after {
+        content: ')';
+      }
+    }
+
+    a {
+      color: black;
+    }
+  }
+
+  .navtree_active > .navtree_title {
+    background-color: @bold-accent;
+    color: @bold-accent-secondary;
+    border-radius: .5em;
+
+    a {
+      color: white;
+    }
+  }
 }
