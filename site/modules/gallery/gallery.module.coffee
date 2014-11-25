@@ -1,6 +1,7 @@
 angular.module 'module.gallery', [
     'restangular'
     'ui.router'
+    'service.overlay'
 ]
 .config [
     '$stateProvider',
@@ -108,12 +109,12 @@ angular.module 'module.gallery', [
     scope:
         image: '='
     controller: [
-        '$scope', '$window',
-        ($scope, $window) ->
+        '$scope', '$window', 'overlayService'
+        ($scope, $window, overlayService) ->
             $scope.image.friendlyDate = moment($scope.image.timestamp).format('lll')
 
             $scope.openImg = ->
-                $window.location.href = hubEnv.remoteMediaLocation + $scope.image.locator
+                overlayService.display $scope.image
     ]
 .directive 'navtree', ['$compile',
     ($compile) ->
