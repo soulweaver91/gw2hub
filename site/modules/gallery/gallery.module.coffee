@@ -1,6 +1,8 @@
 angular.module 'module.gallery', [
     'restangular'
     'ui.router'
+    'service.overlay'
+    'module.common'
 ]
 .config [
     '$stateProvider',
@@ -108,12 +110,12 @@ angular.module 'module.gallery', [
     scope:
         image: '='
     controller: [
-        '$scope', '$window',
-        ($scope, $window) ->
+        '$scope', '$window', 'overlayService'
+        ($scope, $window, overlayService) ->
             $scope.image.friendlyDate = moment($scope.image.timestamp).format('lll')
 
             $scope.openImg = ->
-                $window.location.href = hubEnv.remoteMediaLocation + $scope.image.locator
+                overlayService.display $scope.image
     ]
 .directive 'navtree', ['$compile',
     ($compile) ->
@@ -168,18 +170,3 @@ angular.module 'module.gallery', [
             $compile($template)($scope)
             element.append $template
     ]
-.filter 'filesize', ->
-    (input) ->
-        if _.isNumber input
-            if input < 0
-                input
-            else
-                units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
-                i = 0
-                while input > 1024
-                    i++
-                    input /= 1024
-
-                input.toFixed(1) + ' ' + units[Math.min i, units.length - 1]
-        else
-            input

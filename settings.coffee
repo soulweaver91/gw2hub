@@ -18,12 +18,12 @@ settings = {
         vendorScripts: [
             'bower_components/angular/angular.js'
             'bower_components/angular-ui-router/release/angular-ui-router.js'
+            'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
             'bower_components/restangular/src/restangular.js'
             'bower_components/lodash/dist/lodash.js'
             'bower_components/moment/moment.js'
             'bower_components/moment/min/moment-with-locales.js'
             'bower_components/moment/locale/*.js'
-            'bower_components/angular-bootstrap-nav-tree/dist/abn_tree_directive.js'
         ]
         APISecret: APISecret
         APIAddress: 'http://soul-weaver.tk'

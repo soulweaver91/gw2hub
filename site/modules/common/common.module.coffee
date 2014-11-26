@@ -30,3 +30,18 @@ angular.module 'module.common', [
         $scope.logout = ->
             authService.logout()
 ]
+.filter 'filesize', ->
+    (input) ->
+        if _.isNumber input
+            if input < 0
+                input
+            else
+                units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+                i = 0
+                while input > 1024
+                    i++
+                    input /= 1024
+
+                input.toFixed(1) + ' ' + units[Math.min i, units.length - 1]
+        else
+            input
