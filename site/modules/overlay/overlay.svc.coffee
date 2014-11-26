@@ -1,6 +1,7 @@
 angular.module 'service.overlay', [
     'restangular',
     'ui.bootstrap'
+    'module.common'
 ]
 .factory 'overlayService', [
     'Restangular', '$modal'
