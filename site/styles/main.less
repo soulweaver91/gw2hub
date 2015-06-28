@@ -426,3 +426,33 @@ footer {
   }
 
 }
+
+.media-container {
+  background-color: @bold-accent;
+  width: 100%;
+  text-align: center;
+  border: 1em solid @bold-accent;
+  margin-top: -1.5em;
+
+  img, video {
+    max-width: 100%;
+  }
+}
+
+.media-main-asides {
+  @media (min-width: @screen-sm-min) {
+    font-size: 125%;
+    margin-top: -2.5em;
+
+    > span {
+      display: block;
+    }
+  }
+}
+.media-tag {
+  color: #777;
+
+  &.last {
+    color: black;
+  }
+}

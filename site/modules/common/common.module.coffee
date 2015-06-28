@@ -45,3 +45,26 @@ angular.module 'module.common', [
                 input.toFixed(1) + ' ' + units[Math.min i, units.length - 1]
         else
             input
+.directive 'tagList', ->
+    restrict: 'A'
+    replace: true
+    templateUrl: 'modules/common/taglist.html'
+    scope:
+        tags: '='
+    controller: [
+        '$scope',
+        ($scope) ->
+            $scope.$watch 'tagTree', (newVal, oldVal) ->
+                $scope.tagsParsed = []
+                walkTree = (path, tag) ->
+                    newPath = path.concat [tag.name]
+                    if tag.depth == 0
+                        $scope.tagsParsed.push newPath
+
+                    _.each tag.children, (subtag) ->
+                        walkTree newPath, subtag
+
+                _.each newVal, (tag) ->
+                    walkTree [], tag
+                console.log $scope.tagsParsed
+    ]

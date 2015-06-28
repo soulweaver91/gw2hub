@@ -5,6 +5,7 @@ angular.module 'gw2hub', [
     'module.common'
     'module.main'
     'module.gallery'
+    'module.media'
     'service.auth'
 ]
 .config [
