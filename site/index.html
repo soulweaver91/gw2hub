@@ -12,8 +12,10 @@
     <body>
         <div class="wrapper">
             <nav ng-include src="'modules/common/nav.tpl.html'"></nav>
-            <div class="container" ui-view>
-                <p>Loading... (If this message doesn't go away, the application failed to start up.)</p>
+            <div ui-view>
+                <div class="container">
+                    <p>Loading... (If this message doesn't go away, the application failed to start up.)</p>
+                </div>
             </div>
             <footer ng-include src="'modules/common/footer.tpl.html'"></footer>
         </div>
