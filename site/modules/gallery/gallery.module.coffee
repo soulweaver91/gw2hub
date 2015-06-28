@@ -12,6 +12,21 @@ angular.module 'module.gallery', [
             url: '/g'
             templateUrl: 'modules/gallery/galleryframe.tpl.html'
             controller: 'galleryRedirectController'
+            resolve: {
+                stats: [
+                    'Restangular', '$q',
+                    (Restangular, $q) ->
+                        deferred = $q.defer()
+
+                        Restangular.all('gallery').one('stats').get()
+                        .then (stats) ->
+                            deferred.resolve stats.plain()
+                        , (err) ->
+                            deferred.reject err
+
+                        deferred.promise
+                ]
+            }
         .state 'gallery.year',
             url: '/:year'
             templateUrl: 'modules/gallery/gallery.tpl.html'
@@ -32,37 +47,40 @@ angular.module 'module.gallery', [
                 mode: 'd'
 ]
 .controller 'galleryRedirectController', [
-    '$state', '$scope',
-    ($state, $scope) ->
+    '$state', '$scope', 'stats',
+    ($state, $scope, stats) ->
         if $state.current.name is 'gallery'
             $state.go 'gallery.year', { year: moment().year() }
 
-        # Build a temporary navigation tree for 2012-2014. This will be pulled from the API with stats later.
         $scope.navtree = {
             name: 'Navigation'
-            count: 9001
+            count: stats.count
             children: []
         }
-        $scope.navtree.children.push {
-            name: y.toString()
-            count: '?'
-            state:
-                name: 'gallery.year'
-                params:
-                    year: y
-            children: []
-        } for y in [2012..2014]
-        _.each $scope.navtree.children, (item) ->
-            item.children.push {
-                name: moment(M: m - 1).format 'MMMM'
-                count: '?'
+        _.each stats.years, (yearData, year) ->
+            months = []
+            _.each yearData.months, (monthData, month) ->
+                months.push {
+                    name: moment(M: parseInt(month)).format 'MMMM'
+                    count: monthData.count.toString()
+                    state:
+                        name: 'gallery.month'
+                        params:
+                            year: parseInt(year)
+                            month: parseInt(month) + 1
+                    children: []
+                }
+
+            $scope.navtree.children.push {
+                name: year
+                count: yearData.count.toString()
                 state:
-                    name: 'gallery.month'
+                    name: 'gallery.year'
                     params:
-                        year: item.state.params.year
-                        month: m
-                children: []
-            } for m in [1..12]
+                        year: parseInt(year)
+                children: months
+            }
+
 ]
 .controller 'galleryController', [
     '$scope', '$state', '$stateParams', 'Restangular',
