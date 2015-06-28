@@ -54,7 +54,7 @@ angular.module 'module.common', [
     controller: [
         '$scope',
         ($scope) ->
-            $scope.$watch 'tagTree', (newVal, oldVal) ->
+            $scope.$watch 'tags', (newVal, oldVal) ->
                 $scope.tagsParsed = []
                 walkTree = (path, tag) ->
                     newPath = path.concat [tag.name]
