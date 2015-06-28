@@ -6,7 +6,7 @@
     <div class="overlay-data container-fluid">
         <a class="pull-right overlay-close" ng-click="$close()">&times;</a>
         <h3>
-            {{media.name}}
+            <a href="" ng-click="openMain()">{{media.name}}</a>
         </h3>
         <div class="row">
             <div class="col-xs-3">Type</div>
@@ -20,14 +20,12 @@
             <div class="col-xs-3">Filesize</div>
             <div class="col-xs-9">{{media.size | filesize}}</div>
         </div>
-        <div class="row" ng-if="media.description">
-            <div class="col-xs-3">Description</div>
-            <div class="col-xs-9">{{media.description}}</div>
-        </div>
         <div class="row">
-            <div class="col-xs-3">Tags</div>
-            <div class="col-xs-9">
-                <span>No tags</span>
+            <div class="col-xs-12">
+                <a href="" ng-click="openMain()">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                    More details
+                </a>
             </div>
         </div>
         <div class="row">

@@ -1,0 +1,29 @@
+<div class="media-container">
+    <img ng-src="{{src}}" ng-if="type == 'image'">
+    <video ng-src="{{src}}" ng-if="type == 'movie'" controls="controls" autoplay="autoplay"></video>
+</div>
+<div class="container">
+    <div class="row">
+        <h2 class="col-sm-9 col-xs-12">
+            <span class="glyphicon glyphicon-picture" ng-if="type == 'image'"></span>
+            <span class="glyphicon glyphicon-film" ng-if="type == 'movie'"></span>
+            {{media.name}}
+        </h2>
+    </div>
+    <div class="col-sm-3 col-sm-push-9 col-xs-12 media-main-asides">
+        <span>
+            <span class="glyphicon glyphicon-time"></span> {{mediaDate}}
+        </span>
+        <span>
+            <span class="glyphicon glyphicon-record"></span> {{media.size | filesize}}
+        </span>
+    </div>
+    <div class="col-sm-9 col-sm-pull-3 col-xs-12">
+        <div ng-if="media.description">
+            {{media.description}}
+        </div>
+        <div>
+            <div tag-list tags="media.tags"></div>
+        </div>
+    </div>
+</div>
