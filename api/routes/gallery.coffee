@@ -24,7 +24,7 @@ module.exports = (app, db) ->
     app.options '/gallery/:year/:month/:day', options ['GET']
 
     app.get '/gallery/stats', (req, res, next) ->
-        if statsCache.updated == 0 || moment().subtract(1, 'minutes').valueOf() < statsCache.updated
+        if moment().subtract(1, 'minutes').valueOf() > statsCache.updated
             stats = {
                 count: 0
                 years: {}
