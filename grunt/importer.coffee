@@ -79,9 +79,6 @@ module.exports = (grunt) ->
 
             console.log "Tag file parsed. Found #{Object.keys(tagList).length} tags and #{rels} relations."
 
-            console.log _.pluck tagList, 'name'
-            return
-
             db = new sqlite.Database settings.database
 
             async.eachSeries orderedTagArray, (tagName, cb) ->
