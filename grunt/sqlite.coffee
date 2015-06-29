@@ -55,10 +55,21 @@ module.exports = (grunt) ->
                 FOREIGN KEY (tag) REFERENCES tTag (id) ON DELETE CASCADE,
                 PRIMARY KEY (file, tag)
             );
+
+            CREATE TABLE tStateVars (
+                key STRING NOT NULL,
+                value STRING NOT NULL
+            );
         '''
 
         tablesCreated.then ->
             console.log 'Adding initial data points...'
+
+            stateVarsCreated = q.ninvoke db, 'exec', '''
+                INSERT INTO tStateVars (key, value) VALUES ("lastScanTime", "0");
+                '''
+            .then ->
+                console.log 'State variables initialized.'
 
             tagsCreated = q.ninvoke db, 'exec', '''
                 INSERT INTO tTag (name, parent) VALUES ("Map", null);
@@ -89,7 +100,7 @@ module.exports = (grunt) ->
                         console.log 'User created.'
                         userCreated.resolve()
 
-            q.all [tagsCreated, userCreated, passHashCreated]
+            q.all [tagsCreated, userCreated, passHashCreated, stateVarsCreated]
             .then ->
                 success true
             , ->

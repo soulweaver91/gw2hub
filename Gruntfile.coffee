@@ -9,10 +9,10 @@ module.exports = (grunt) ->
     settings = settingsProvider.get()
 
     grunt.loadNpmTasks 'grunt-contrib-uglify'
-    grunt.loadNpmTasks 'grunt-contrib-watch'
     grunt.loadNpmTasks 'grunt-contrib-clean'
     grunt.loadNpmTasks 'grunt-contrib-copy'
     grunt.loadNpmTasks 'grunt-contrib-less'
+    grunt.loadNpmTasks 'grunt-chokidar'
     grunt.loadNpmTasks 'grunt-html2js'
     grunt.loadNpmTasks 'grunt-express'
     grunt.loadNpmTasks 'grunt-newer'
@@ -94,7 +94,7 @@ module.exports = (grunt) ->
             intermediate: ['intermediate/*', '!intermediate/.gitignore']
             site: ['release/' + settings.deployDir + '/*', '!**/cache']
 
-        watch:
+        chokidar:
             uiStyles:
                 files: ['site/**/*.less']
                 tasks: ['less:site', 'newer:copy:site']
@@ -104,18 +104,9 @@ module.exports = (grunt) ->
             uiScripts:
                 files: ['site/**/*.html','site/**/*.coffee']
                 tasks: ['build']
-            #media:
-            #    files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
-            #    tasks: ['listChangedScan']
-            #    options:
-            #        event: ['renamed', 'added', 'deleted']
-            #        spawn: false
-            #mediaChanged:
-            #    files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
-            #    tasks: ['filesModifiedScan']
-            #    options:
-            #        event: ['changed']
-            #        spawn: false
+            media:
+                files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
+                tasks: ['syncFileDB']
 
         html2js:
             options:
@@ -136,6 +127,6 @@ module.exports = (grunt) ->
     # The point of using an intermediate folder is that if the build fails, the live folder won't end up in a broken state
     grunt.registerTask 'build', ['clean:intermediate', 'powerbuild:site', 'uglify:site', 'html2js:site', 'createEnv',
                                  'less', 'copy:static', 'copy:vendorFonts', 'clean:site', 'copy:site']
-    grunt.registerTask 'runAPI', ['build', 'fullScan', 'express:api', 'express-keepalive']
-    grunt.registerTask 'develop', ['build', 'fullScan', 'express:api', 'watch']
+    grunt.registerTask 'runAPI', ['build', 'syncFileDB', 'express:api', 'express-keepalive']
+    grunt.registerTask 'develop', ['build', 'syncFileDB', 'express:api', 'chokidar']
 
