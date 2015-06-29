@@ -10,10 +10,6 @@ gm = require 'gm'
 
 settings = require('../settings').get()
 
-filenames = []
-relations = {}
-lastRun = 0
-
 getFileHashes = (paths, cb) ->
     tmpRelations = {}
     errors = []
@@ -43,6 +39,13 @@ hashIndexRows = (rows) ->
 
     return hashes
 
+nameIndexRows = (rows) ->
+    locators = {}
+    _.each rows, (data) ->
+        locators[data.locator] = data.hash
+
+    return locators
+
 generateThumb = (fname, hash, cb) ->
     # Create the cache folder if it doesn't exist yet
     if fs.existsSync path.join('release', settings.deployDir, 'cache', "th_#{hash}.jpg")
@@ -63,150 +66,123 @@ generateThumb = (fname, hash, cb) ->
         else
             cb()
 
-updateDatabase = (current, cb) ->
-    lastRun = moment().valueOf()
+updateDatabase = (current, previous, db, lastRun, cb) ->
+    # Find hashes new to the db
+    addHashes = _.difference _.keys(current), _.keys(previous)
 
-    db = new sqlite.Database settings.database
-    db.all "SELECT hash, locator FROM tFile", (err, rows) ->
-        return success false if err?
+    # Find hashes that were in the db but aren't in the current set
+    del = _.difference _.keys(previous) , _.keys(current)
 
-        previous = hashIndexRows rows
+    # Make a hash-based object of files that were moved
+    mov = {}
+    _.each _.intersection(_.keys(previous) , _.keys(current)), (key) ->
+        if current[key] != previous[key]
+            mov[key] = current[key]
 
-        # Find hashes new to the db
-        addHashes = _.difference _.keys(current), _.keys(previous)
+    # Make a hash-based object of new file locations
+    add = {}
+    _.each addHashes, (key) ->
+        add[key] = current[key]
 
-        # Find hashes that were in the db but aren't in the current set
-        del = _.difference _.keys(previous) , _.keys(current)
+    errors = []
 
-        # Make a hash-based object of files that were moved
-        mov = {}
-        _.each _.intersection(_.keys(previous) , _.keys(current)), (key) ->
-            if current[key] != previous[key]
-                mov[key] = current[key]
+    thumbQueue = async.queue (hash, done) ->
+        generateThumb add[hash], hash, (err) ->
+            setImmediate done, err
+    , settings.scannerConcurrency
 
-        # Make a hash-based object of new file locations
-        add = {}
-        _.each addHashes, (key) ->
-            add[key] = current[key]
+    thumbQueue.drain = ->
+        return cb errors if errors.length > 0
 
-        errors = []
+        console.log "Now syncing database... (adding #{_.keys(add).length}, removing #{del.length}, updating #{_.keys(mov).length})"
+        if _.keys(add).length + del.length + _.keys(mov).length > 100
+            console.log "Seems like there are quite a bit of changes, so this may take some time."
 
-        thumbQueue = async.queue (hash, done) ->
-            generateThumb add[hash], hash, (err) ->
-                done err
-        , settings.scannerConcurrency
+        setLastCheckTime db, lastRun, ->
+            # Don't really care if this one fails. It just means the next scan will go over a few more files.
+            true
 
-        thumbQueue.drain = ->
-            return cb errors if errors.length > 0
+        db.parallelize ->
+            stmtAdd = db.prepare "INSERT INTO tFile (hash, locator, name, size, timestamp) VALUES (?, ?, ?, ?, ?)"
+            _.each add, (fname, hash) ->
+                stats = fs.statSync path.join settings.localMediaLocation, fname
+                stmtAdd.run hash, fname, fname, stats.size, Math.min(stats.ctime.getTime(), stats.mtime.getTime())
+            stmtAdd.finalize()
 
-            relations = current
+            stmtDel = db.prepare "DELETE FROM tFile WHERE hash = ?"
+            _.each del, (hash) ->
+                stmtDel.run hash
+            stmtDel.finalize()
 
-            console.log "Now syncing database... (adding #{_.keys(add).length}, removing #{del.length}, updating #{_.keys(mov).length})"
-            if _.keys(add).length + del.length + _.keys(mov).length > 100
-                console.log "Seems like there are quite a bit of changes, so this may take some time."
+            stmtMov = db.prepare "UPDATE tFile SET locator = ? WHERE hash = ?"
+            _.each mov, (fname, hash) ->
+                stmtMov.run fname, hash
+            stmtMov.finalize()
 
-            db.parallelize ->
-                stmtAdd = db.prepare "INSERT INTO tFile (hash, locator, name, size, timestamp) VALUES (?, ?, ?, ?, ?)"
-                _.each add, (fname, hash) ->
-                    stats = fs.statSync path.join settings.localMediaLocation, fname
-                    stmtAdd.run hash, fname, fname, stats.size, Math.min(stats.ctime.getTime(), stats.mtime.getTime())
-                stmtAdd.finalize()
+        db.close cb
 
-                stmtDel = db.prepare "DELETE FROM tFile WHERE hash = ?"
-                _.each del, (hash) ->
-                    stmtDel.run hash
-                stmtDel.finalize()
+    thumbQueue.push _.keys(add), (err) ->
+        errors.push err if err?
 
-                stmtMov = db.prepare "UPDATE tFile SET locator = ? WHERE hash = ?"
-                _.each mov, (fname, hash) ->
-                    stmtMov.run fname, hash
-                stmtMov.finalize()
+getLastCheckTime = (db, cb) ->
+    db.get 'SELECT value FROM tStateVars WHERE key = "lastScanTime"', (err, row) ->
+        cb err, parseInt(row.value)
 
-            db.close cb
-
-        thumbQueue.push _.keys(add), (err) ->
-            errors.push err if err?
+setLastCheckTime = (db, lastRun, cb) ->
+    db.run 'UPDATE tStateVars SET value = ? WHERE key = "lastScanTime"', lastRun, (err) ->
+        cb err
 
 module.exports = (grunt) ->
-    grunt.registerTask 'fullScan', 'Scan and hash the media folder for new and updated files.', ->
-        console.log 'Running a folder-wide scan for file changes...'
+    grunt.registerTask 'syncFileDB', 'Scan the folder for changed files.', ->
         success = @async()
 
-        glob '*.+(jpg|mp4)', {
-            cwd: settings.localMediaLocation
-        }, (err, res) ->
+        db = new sqlite.Database settings.database
+        getLastCheckTime db, (err, lastRun) ->
             return success false if err?
 
-            getFileHashes res, (err, hashes) ->
+            console.log "Last scan run at #{moment(lastRun).format('ddd Do MMM YYYY LTS')}."
+
+            thisRun = moment().valueOf()
+            db.all "SELECT hash, locator FROM tFile", (err, dbFiles) ->
                 return success false if err?
 
-                filenames = _.values hashes
-
-                updateDatabase hashes, (err) ->
-                    success !err?
-
-
-    grunt.registerTask 'listChangedScan', 'Scan added, deleted and moved files and update the database.', ->
-        success = @async()
-
-        glob '*.+(jpg|mp4)', {
-            cwd: settings.localMediaLocation
-        },  (err, res) ->
-            return success false if err?
-            newFiles = _.difference res, filenames
-            missingFiles = _.difference filenames, res
-
-            # Get a partial current list, taking old hash-file relations and removing missing files
-            # (here's an assumption none of the files on both lists changed, which should be true if the watch task
-            # didn't miss any events to run through filesModifiedScan)
-            current = _.omit relations, (fname) ->
-                _.contains missingFiles, fname
-
-            getFileHashes newFiles, (err, hashes) ->
-                return success false if err?
-
-                # Add the new files' hash-file relations in, completing the current relation sheet
-                current = _.merge current, hashes
-
-                # Update the filename cache
-                filenames = _.values current
-
-                updateDatabase current, (err) ->
-                    success !err?
-
-    grunt.registerTask 'filesModifiedScan', 'Rehash modified files and update the database.', ->
-        success = @async()
-
-        glob '*.+(jpg|mp4)', {
-            cwd: settings.localMediaLocation
-        },  (err, res) ->
-            return success false if err?
-
-            changed = []
-            async.each res, (file, done) ->
-                fs.stat path.join(settings.localMediaLocation, file), (err, stats) ->
-                    return done err if err?
-
-                    if Math.max(stats.ctime.getTime(), stats.mtime.getTime()) > lastRun
-                        changed.push file
-                    done()
-            , (err) ->
-                return success false if err?
-
-                console.log changed
-
-                # Remove pairs corresponding to changed files temporarily from the hash-relations cache
-                current = _.omit relations, (fname) ->
-                    _.contains changed, fname
-
-                getFileHashes changed, (err, hashes) ->
+                glob '*.+(jpg|mp4)', {
+                    cwd: settings.localMediaLocation
+                },  (err, locNames) ->
                     return success false if err?
 
-                    # Add the new files' hash-file relations in, completing the current relation sheet
-                    current = _.merge current, hashes
+                    # dbFiles contains old hashes and locators
+                    # locNames contains names of files currently in the folder
 
-                    # Update the filename cache
-                    filenames = _.values current
+                    oldFileHashRels = nameIndexRows dbFiles
 
-                    updateDatabase current, (err) ->
-                        success !err?
+                    chgFiles = []
+                    async.each locNames, (file, done) ->
+                        fs.stat path.join(settings.localMediaLocation, file), (err, stats) ->
+                            return done err if err?
+
+                            if Math.max(stats.ctime.getTime(), stats.mtime.getTime()) > lastRun || !oldFileHashRels[file]?
+                                chgFiles.push file
+
+                            done()
+                    , (err) ->
+                        return success false if err?
+
+                        oldFiles = _.difference locNames, chgFiles
+                        # chgFiles = files that changed after the last time
+                        # oldFiles = files that didn't change since that
+
+                        rels = {}
+
+                        _.each oldFiles, (file) ->
+                            hash = oldFileHashRels[file]
+                            rels[hash] = file
+
+                        getFileHashes chgFiles, (err, hashes) ->
+                            return success false if err?
+
+                            # Add the new files' hash-file relations in, completing the current relation sheet
+                            current = _.merge rels, hashes
+
+                            updateDatabase current, hashIndexRows(dbFiles), db, thisRun, (err) ->
+                                success !err?
