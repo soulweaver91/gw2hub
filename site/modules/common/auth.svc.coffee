@@ -10,6 +10,13 @@ angular.module 'service.auth', [
         deferred = $q.defer()
 
         return {
+            userLevels: ->
+                disabled: -9999
+                user: 0
+                trusted: 10
+                privileged: 20
+                editor: 30
+                admin: 50
             user: ->
                 return currentUser
             userAsync: ->

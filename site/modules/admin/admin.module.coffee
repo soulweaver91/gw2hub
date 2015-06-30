@@ -5,7 +5,7 @@ verifyAdmin = [
 
         authService.userAsync()
         .then (user) ->
-            if !user? || user.ulevel < 50
+            if !user? || user.ulevel < authService.userLevels().admin
                 deferred.reject()
             else
                 deferred.resolve user
