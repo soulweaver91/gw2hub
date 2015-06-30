@@ -6,6 +6,7 @@ angular.module 'gw2hub', [
     'module.main'
     'module.gallery'
     'module.media'
+    'module.admin'
     'service.auth'
 ]
 .config [
@@ -31,11 +32,18 @@ angular.module 'gw2hub', [
 .run [
     'authService', '$rootScope', '$state'
     (authService, $rootScope, $state) ->
-        authService.update()
+        authService.init()
 
         moment.locale 'en'
 
         $rootScope.$on '$stateNotFound', (event) ->
             event.preventDefault()
             $state.go 'future'
+
+        $rootScope.$on '$stateChangeError', (event, toState, toParams, fromState, fromParams, error) ->
+            if fromState.name == ''
+                # Failure upon initializing, probably tried to go to a restricted page.
+                # Usually, we'd just prevent the state change and stay where we were, but now we have no state we're
+                # coming from, so go to the front page instead
+                $state.go 'main'
 ]
