@@ -1,6 +1,7 @@
 options = require '../tools/optionsroute'
 middleware = require '../tools/middleware'
 privilegeLevels = require '../tools/privilegelevels'
+parseTagTree = require '../tools/tagtree'
 
 _ = require 'lodash'
 
@@ -15,7 +16,7 @@ module.exports = (app, db) ->
                 .json { status: 500, error: 'Database error' }
             else
                 res.status 200
-                .json rows
+                .json parseTagTree rows
 
     app.post '/tags'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
