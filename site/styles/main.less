@@ -456,3 +456,42 @@ footer {
     color: black;
   }
 }
+
+.big-links {
+  > a {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 110%;
+    padding: .5em 0;
+    color: black;
+
+    > div {
+      flex-basis: 100%;
+
+      span {
+        display: block;
+
+        &.title {}
+        &.desc {
+          font-size: 80%;
+        }
+      }
+    }
+
+    > span {
+      flex-basis: 25px;
+    }
+
+    &:hover, &:focus {
+      text-decoration: none;
+      color: @bold-accent;
+    }
+
+    + a {
+      border-top: 1px solid @bold-accent;
+    }
+  }
+}
