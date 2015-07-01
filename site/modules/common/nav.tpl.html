@@ -24,9 +24,9 @@
             </li>
         </ul>
         <ul class="nav navbar-nav" ng-if="user != null">
-            <li>
-                <span>Hello, {{user.name}} ({{user.email}})</span>
-                <span>Ulevel={{user.ulevel}}</span>
+            <li class="navbar-user-section">
+                <span user-name-tag user="user"></span>
+                <span>{{user.email}}</span>
             </li>
             <li>
                 <a href="#" ng-click="logout()">Log out</a>

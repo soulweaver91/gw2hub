@@ -45,6 +45,18 @@ body {
     float: left;
   }
 
+  .navbar-user-section {
+    text-align: right;
+    height: 40px;
+    padding: 5px;
+
+    > span {
+      display: block;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+
   li {
     a, span {
       color: @bold-accent-secondary;
@@ -493,5 +505,12 @@ footer {
     + a {
       border-top: 1px solid @bold-accent;
     }
+  }
+}
+
+.user-name-tag {
+  .glyphicon {
+    margin-right: .25em;
+    font-size: 85%;
   }
 }

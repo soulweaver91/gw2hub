@@ -68,3 +68,14 @@ angular.module 'module.common', [
                     walkTree [], tag
                 console.log $scope.tagsParsed
     ]
+.directive 'userNameTag', ->
+    restrict: 'A'
+    replace: true
+    templateUrl: 'modules/common/username.tpl.html'
+    scope:
+        user: '='
+    controller: [
+        '$scope', 'authService',
+        ($scope, authService) ->
+            $scope.ulevels = authService.userLevels()
+    ]
