@@ -83,29 +83,29 @@ angular.module 'module.common', [
     ($compile) ->
         restrict: 'E'
         replace: false
-#templateUrl: 'modules/gallery/navtree.tpl.html'
         scope:
             branch: '='
+            settings: '='
         controller: [
             '$scope', '$state', '$stateParams',
             ($scope, $state, $stateParams) ->
                 $scope.childToggle = true
 
-                $scope.activeBranch = ->
-                    $scope.branch.state? &&
-                        parseInt($stateParams.year) == $scope.branch.state.params.year &&
-                        ((!$stateParams.month? && !$scope.branch.state.params.month?) ||
-                            parseInt($stateParams.month) == $scope.branch.state.params.month)
-
                 $scope.select = ->
                     $scope.childToggle = true
                     if $scope.branch.state.name?
                         $state.go $scope.branch.state.name, $scope.branch.state.params
+
+                $scope.getIsActive = ->
+                    if _.isFunction $scope.settings.isActive
+                        $scope.settings.isActive $scope.branch.state, $stateParams
+                    else
+                        false
         ]
         link: ($scope, element) ->
-# Has to be defined this way for recursion to not cause an infinite loop
+            # Has to be defined this way for recursion to not cause an infinite loop
             template = '''
-            <div class="navtree_branch" ng-class="{'navtree_active': activeBranch()}">
+            <div class="navtree_branch" ng-class="{'navtree_active': getIsActive()}">
                 <div class="navtree_title">
                     <span class="navtree_toggler glyphicon"
                         ng-click="childToggle = !childToggle"
@@ -124,7 +124,7 @@ angular.module 'module.common', [
                     <span class="navtree_count">{{branch.count}}</span>
                 </div>
                 <div class="navtree_children" ng-show="childToggle">
-                    <navtree ng-repeat="sub in branch.children" branch="sub"></navtree>
+                    <navtree ng-repeat="sub in branch.children" branch="sub" settings="settings"></navtree>
                 </div>
             </div>
             '''

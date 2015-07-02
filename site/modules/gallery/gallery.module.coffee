@@ -52,11 +52,19 @@ angular.module 'module.gallery', [
         if $state.current.name is 'gallery'
             $state.go 'gallery.year', { year: moment().year() }
 
+        $scope.navtreeSettings =
+            isActive: (branchState, uiState) ->
+                branchState? &&
+                    parseInt(uiState.year) == branchState.params.year &&
+                    ((!uiState.month? && !branchState.params.month?) ||
+                        parseInt(uiState.month) == branchState.params.month)
+
         $scope.navtree = {
             name: 'Navigation'
             count: stats.count
             children: []
         }
+
         _.each stats.years, (yearData, year) ->
             months = []
             _.each yearData.months, (monthData, month) ->
