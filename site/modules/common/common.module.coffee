@@ -116,7 +116,7 @@ angular.module 'module.common', [
                         }"
                     ></span>
                     <a href="" ng-if="branch.state" ng-click="select()">
-                        <span class="navtree_toggler glyphicon glyphicon-calendar"
+                        <span class="navtree_toggler glyphicon {{settings.leafClasses}}"
                             ng-if="branch.children.length == 0"></span>
                         {{branch.name}}
                     </a>
