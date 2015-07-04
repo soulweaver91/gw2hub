@@ -1,6 +1,7 @@
 angular.module 'gw2hub', [
     'templates-site'
     'ui.router'
+    'ui.select'
     'restangular'
     'module.common'
     'module.main'
@@ -10,8 +11,8 @@ angular.module 'gw2hub', [
     'service.auth'
 ]
 .config [
-    '$stateProvider', '$urlRouterProvider', 'RestangularProvider'
-    ($stateProvider, $urlRouterProvider, RestangularProvider) ->
+    '$stateProvider', '$urlRouterProvider', 'RestangularProvider', 'uiSelectConfig'
+    ($stateProvider, $urlRouterProvider, RestangularProvider, uiSelectConfig) ->
         $stateProvider
         .state 'main',
             url: '/'
@@ -28,6 +29,8 @@ angular.module 'gw2hub', [
         RestangularProvider.setDefaultHttpFields {
             withCredentials: true
         }
+
+        uiSelectConfig.theme = 'bootstrap'
 ]
 .run [
     'authService', '$rootScope', '$state'

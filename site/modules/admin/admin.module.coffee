@@ -17,6 +17,9 @@ verifyAdmin = [
 
 angular.module 'module.admin', [
     'service.auth'
+    'ui.select'
+    'restangular'
+    'ngSanitize'
 ]
 .config [
     '$stateProvider',
@@ -37,15 +40,36 @@ angular.module 'module.admin', [
         .state 'adminTags.add',
             url: '/new'
             templateUrl: 'modules/admin/tagmanageredit.tpl.html'
-            #controller: 'adminTagManagerAddController'
+            controller: 'adminTagManagerEditController'
             resolve:
                 user: verifyAdmin
+                tag: [
+                    '$q',
+                    ($q) ->
+                        deferred = $q.defer()
+                        deferred.resolve
+                            name: ''
+                            id: -1
+                            parent: null
+                            icon: null
+
+                        deferred.promise
+                ]
+
         .state 'adminTags.edit',
             url: '/edit/:id'
             templateUrl: 'modules/admin/tagmanageredit.tpl.html'
             controller: 'adminTagManagerEditController'
             resolve:
-                user: verifyAdmin
+                user: verifyAdmin,
+                tag: [
+                    'Restangular', '$stateParams',
+                    (Restangular, $stateParams) ->
+                        Restangular.one 'tags', $stateParams.id
+                        .get()
+                ]
+            params:
+                msg: null
 ]
 .controller 'adminMainPageController', [
     '$scope',
@@ -80,12 +104,50 @@ angular.module 'module.admin', [
 
             addStates $scope.tags
 ]
-.controller 'adminTagManagerAddController', [
-    '$scope',
-    ($scope) ->
-]
 .controller 'adminTagManagerEditController', [
-    '$scope', '$stateParams',
-    ($scope, $stateParams) ->
-        $scope.id = $stateParams.id
+    '$scope', '$state', '$stateParams', 'tag', 'Restangular',
+    ($scope, $state, $stateParams, tag, Restangular) ->
+        $scope.tag = tag
+        $scope.tagOriginalName = tag.name
+        $scope.icons =
+            items: [
+                {value: null, name: 'Default'}
+                {value: 'user', name: 'Player'}
+                {value: 'trash', name: 'Trash'}
+                {value: 'fire', name: 'Fire'}
+                {value: 'leaf', name: 'Leaf'}
+            ]
+            options: {}
+
+        $scope.msg = $stateParams.msg
+
+        $scope.submitTag = ->
+            values = _.pick $scope.tag, [
+                'name', 'icon', 'priority', 'parent'
+            ]
+
+            if values.parent == ''
+                values.parent = null
+
+            if tag.id != -1
+                tag.patch values
+                .then (res) ->
+                    $state.go 'adminTags.edit',
+                        id: $scope.tag.id
+                        msg: 'successEdited'
+                    ,
+                        reload: true
+                , (err) ->
+                    $scope.msg = 'failureEdited'
+            else
+                Restangular.all 'tags'
+                .post tag
+                .then (res) ->
+                    $state.go 'adminTags.edit',
+                        id: res.id
+                        msg: 'successAdded'
+                    ,
+                        reload: true
+                , (err) ->
+                    $scope.msg = 'failureAdded'
 ]
