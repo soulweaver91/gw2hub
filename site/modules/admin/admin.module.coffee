@@ -86,6 +86,7 @@ angular.module 'module.admin', [
             isActive: (branchState, uiState) ->
                 branchState? && parseInt(uiState.id) == branchState.params?.id
             leafClasses: 'glyphicon-tag'
+            maxExpand: 1
 
         Restangular.all 'tags'
         .getList()

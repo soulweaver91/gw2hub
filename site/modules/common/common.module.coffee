@@ -88,10 +88,19 @@ angular.module 'module.common', [
         scope:
             branch: '='
             settings: '='
+            level: '@'
         controller: [
             '$scope', '$state', '$stateParams',
             ($scope, $state, $stateParams) ->
-                $scope.childToggle = true
+                if !$scope.level?
+                    $scope.level = 0
+                $scope.level = parseInt $scope.level
+                $scope.nextLevel = $scope.level + 1
+
+                if $scope.settings.maxExpand?
+                    $scope.childToggle = $scope.settings.maxExpand > $scope.level
+                else
+                    $scope.childToggle = true
 
                 $scope.select = ->
                     $scope.childToggle = true
@@ -127,8 +136,8 @@ angular.module 'module.common', [
                     <span ng-if="!branch.state">{{branch.name}}</span>
                     <span class="navtree_count" ng-if="branch.count || branch.count === 0">{{branch.count}}</span>
                 </div>
-                <div class="navtree_children" ng-show="childToggle">
-                    <navtree ng-repeat="sub in branch.children" branch="sub" settings="settings"></navtree>
+                <div class="navtree_children" ng-if="childToggle">
+                    <navtree ng-repeat="sub in branch.children" branch="sub" settings="settings" level="{{nextLevel}}"></navtree>
                 </div>
             </div>
             '''
