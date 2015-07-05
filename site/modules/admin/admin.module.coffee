@@ -96,7 +96,6 @@ angular.module 'module.admin', [
                 children: tags
 
             addStates = (node) ->
-                node.count = 0
                 if node.id?
                     node.state =
                         name: 'adminTags.edit'

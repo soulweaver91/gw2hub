@@ -10,7 +10,12 @@ module.exports = (app, db) ->
     app.options '/tags/:id', options ['GET', 'PATCH', 'DELETE']
 
     app.get '/tags', (req, res, next) ->
-        db.all 'SELECT * FROM tTag', (err, rows) ->
+        db.all '''
+            SELECT *, (
+                SELECT COUNT(*) FROM tFileTagRel WHERE tag = tTag.id
+            ) AS selfCount
+            FROM tTag
+        ''', (err, rows) ->
             if err?
                 res.status 500
                 .json { status: 500, error: 'Database error' }
