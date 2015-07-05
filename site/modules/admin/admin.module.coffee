@@ -78,7 +78,9 @@ angular.module 'module.admin', [
 .controller 'adminTagManagerFrameController', [
     '$scope', 'Restangular',
     ($scope, Restangular) ->
-        $scope.tags = []
+        $scope.tags =
+            name: 'Loading tags...'
+            children: []
 
         $scope.tagSettings =
             isActive: (branchState, uiState) ->

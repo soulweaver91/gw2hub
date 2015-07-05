@@ -48,7 +48,7 @@ angular.module 'module.common', [
 .directive 'tagList', ->
     restrict: 'A'
     replace: true
-    templateUrl: 'modules/common/taglist.html'
+    templateUrl: 'modules/common/taglist.tpl.html'
     scope:
         tags: '='
     controller: [
@@ -59,7 +59,9 @@ angular.module 'module.common', [
                 walkTree = (path, tag) ->
                     newPath = path.concat [tag.name]
                     if tag.depth == 0
-                        $scope.tagsParsed.push newPath
+                        $scope.tagsParsed.push
+                            path: newPath
+                            icon: tag.icon
 
                     _.each tag.children, (subtag) ->
                         walkTree newPath, subtag
@@ -117,11 +119,13 @@ angular.module 'module.common', [
                     ></span>
                     <a href="" ng-if="branch.state" ng-click="select()">
                         <span class="navtree_toggler glyphicon {{settings.leafClasses}}"
-                            ng-if="branch.children.length == 0"></span>
+                            ng-if="branch.children.length == 0 && !branch.icon"></span>
+                        <span class="navtree_toggler glyphicon glyphicon-{{branch.icon}}"
+                            ng-if="branch.children.length == 0 && branch.icon"></span>
                         {{branch.name}}
                     </a>
                     <span ng-if="!branch.state">{{branch.name}}</span>
-                    <span class="navtree_count">{{branch.count}}</span>
+                    <span class="navtree_count" ng-if="branch.count || branch.count === 0">{{branch.count}}</span>
                 </div>
                 <div class="navtree_children" ng-show="childToggle">
                     <navtree ng-repeat="sub in branch.children" branch="sub" settings="settings"></navtree>

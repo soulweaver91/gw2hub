@@ -1,9 +1,0 @@
-<div>
-    <div ng-repeat="tag in tagsParsed">
-        <span class="glyphicon glyphicon-tag"></span>
-        <span ng-repeat="part in tag" class="media-tag" ng-class="{last: $last}">
-            {{part}}
-            <span ng-if="!$last" class="glyphicon glyphicon-chevron-right"></span>
-        </span>
-    </div>
-</div>
