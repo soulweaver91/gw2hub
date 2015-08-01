@@ -70,6 +70,23 @@ angular.module 'module.admin', [
                 ]
             params:
                 msg: null
+        .state 'adminMedia',
+            url: '/admin/media'
+            template: '<div ui-view></div>'
+        .state 'adminMedia.edit',
+            url: '/edit/:id'
+            templateUrl: 'modules/admin/mediaedit.tpl.html'
+            controller: 'adminMediaEditController'
+            resolve:
+                user: verifyAdmin,
+                media: [
+                    'Restangular', '$stateParams',
+                    (Restangular, $stateParams) ->
+                        Restangular.one 'media', $stateParams.id
+                        .get()
+                ]
+            params:
+                msg: null
 ]
 .controller 'adminMainPageController', [
     '$scope',
@@ -152,4 +169,27 @@ angular.module 'module.admin', [
                         reload: true
                 , (err) ->
                     $scope.msg = 'failureAdded'
+]
+.controller 'adminMediaEditController', [
+    '$scope', '$state', '$stateParams', 'Restangular', 'media',
+    ($scope, $state, $stateParams, Restangular, media) ->
+        $scope.media = media
+        $scope.msg = $stateParams.msg
+
+        $scope.submitMedia = ->
+            values = _.pick $scope.media, [
+                'name', 'description'
+            ]
+
+            # Cannot patch via the element directly, as Restangular attempts to use the ID instead of going by
+            # the URL the resource was loaded from, and the hash is used as the endpoint identifier for the media
+            Restangular.all('media').one($scope.media.hash).patch values
+            .then (res) ->
+                $state.go 'adminMedia.edit',
+                    id: $scope.media.hash
+                    msg: 'successEdited'
+                ,
+                    reload: true
+            , (err) ->
+                $scope.msg = 'failureEdited'
 ]

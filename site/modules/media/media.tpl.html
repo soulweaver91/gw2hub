@@ -17,6 +17,12 @@
         <span>
             <span class="glyphicon glyphicon-record"></span> {{media.size | filesize}}
         </span>
+        <span ng-if="userCanEdit">
+            <a ui-sref="adminMedia.edit({id: media.hash})">
+                <span class="glyphicon glyphicon-edit"></span>
+                Edit
+            </a>
+        </span>
     </div>
     <div class="col-sm-9 col-sm-pull-3 col-xs-12">
         <div ng-if="media.description">
