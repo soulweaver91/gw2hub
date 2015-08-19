@@ -8,6 +8,7 @@ _ = require 'lodash'
 module.exports = (app, db) ->
     app.options '/tags', options ['GET', 'POST']
     app.options '/tags/:id', options ['GET', 'PATCH', 'DELETE']
+    app.options '/tags/suggest', options ['POST']
 
     app.get '/tags', (req, res, next) ->
         db.all '''
@@ -108,3 +109,23 @@ module.exports = (app, db) ->
                 else
                     res.status 404
                     .json { status: 404, error: 'no such id' }
+
+    app.post '/tags/suggest', (req, res, next) ->
+        if !req.body.q?
+            res.status 400
+            .json { status: 400, error: 'query is required' }
+        else
+
+            db.all '''
+                SELECT id, name
+                FROM tTag
+                WHERE name LIKE ?
+                ORDER BY name ASC
+                LIMIT 10
+            ''', req.body.q + '%', (err, rows) ->
+                if err?
+                    res.status 500
+                    .json { status: 500, error: 'database error' }
+                else
+                    res.status 200
+                    .json rows
