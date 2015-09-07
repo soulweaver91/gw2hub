@@ -565,4 +565,16 @@ footer {
   &.alert-danger .alert-icon {
     .glyphicon-remove-circle;
   }
+
+.tag-id-badge {
+  position: absolute;
+  right: 1.5em;
+  color: #888;
+
+  &:before {
+    content: '(ID ';
+  }
+  &:after {
+    content: ')';
+  }
 }

@@ -59,7 +59,21 @@
         <div class="form-group">
             <label for="tag_editor_parent" class="col-xs-12 col-sm-3 control-label">Parent tag</label>
             <div class="col-xs-12 col-sm-9">
-                <input id="tag_editor_parent" class="form-control" ng-model="tag.parent">
+                <ui-select id="tag_editor_parent" ng-model="selectFields.parentTag">
+                    <ui-select-match placeholder="Type to search for a tag">
+                        <span class="tag-id-badge" ng-if="$select.selected.id !== null">{{$select.selected.id}}</span>
+                        <span class="glyphicon glyphicon-tag" ng-if="$select.selected.id !== null"></span>
+                        <span class="glyphicon glyphicon-remove-sign" ng-if="$select.selected.id === null"></span>
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in tagSuggestions | filter: $select.search track by item.id"
+                            refresh="loadTagSuggestions($select.search)" refresh-delay="1">
+                        <span class="tag-id-badge" ng-if="item.id !== null">{{item.id}}</span>
+                        <span class="glyphicon glyphicon-tag" ng-if="item.id !== null"></span>
+                        <span class="glyphicon glyphicon-remove-sign" ng-if="item.id === null"></span>
+                        {{item.name}}
+                    </ui-select-choices>
+                </ui-select>
                 <span class="help-block">The ID of the parent tag, or empty if at root level.</span>
             </div>
         </div>

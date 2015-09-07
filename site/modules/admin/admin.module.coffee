@@ -138,15 +138,38 @@ angular.module 'module.admin', [
             ]
             options: {}
 
+        $scope.selectFields =
+            parentTag: null
+
+        noParentItem =
+            id: null
+            name: 'No parent'
+        $scope.tagSuggestions = [noParentItem]
+        $scope.loadTagSuggestions = (query) ->
+            return if query.length == 0
+            return $scope.tagSuggestions = [noParentItem] if query.length < 3
+
+            Restangular.all 'tags/suggest'
+            .post
+                q: query
+            .then (res) ->
+                $scope.tagSuggestions = [noParentItem].concat res
+
+        if $scope.tag.parent?
+            Restangular.all 'tags'
+            .get tag.parent
+            .then (res) ->
+                $scope.selectFields.parentTag = res
+        else
+            $scope.selectFields.parentTag = noParentItem
+
         $scope.msg = $stateParams.msg
 
         $scope.submitTag = ->
             values = _.pick $scope.tag, [
-                'name', 'icon', 'priority', 'parent'
+                'name', 'icon', 'priority'
             ]
-
-            if values.parent == ''
-                values.parent = null
+            values.parent = $scope.selectFields.parentTag?.id
 
             if tag.id != -1
                 tag.patch values
