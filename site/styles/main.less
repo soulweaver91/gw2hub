@@ -1,6 +1,8 @@
 @import '../../bower_components/bootstrap/less/bootstrap.less';
+@import (inline) '../../bower_components/angular-ui-select/dist/select.css';
 
 @icon-font-path: "static/";
+@input-border-focus: @bold-accent;
 
 @font-face {
   font-family: 'GW2 Hub Symbols';
@@ -29,6 +31,14 @@ body {
   }
 }
 
+a {
+  color: @bold-accent;
+
+  &:hover, &:focus, &:active {
+    color: lighten(@bold-accent, 10%);
+  }
+}
+
 .wrapper {
   min-height: 100%;
   position: relative;
@@ -43,6 +53,18 @@ body {
 
   .navbar-form {
     float: left;
+  }
+
+  .navbar-user-section {
+    text-align: right;
+    height: 40px;
+    padding: 5px;
+
+    > span {
+      display: block;
+      height: 20px;
+      line-height: 20px;
+    }
   }
 
   li {
@@ -454,5 +476,121 @@ footer {
 
   &.last {
     color: black;
+  }
+}
+
+.big-links {
+  > a {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    font-size: 110%;
+    padding: .5em 0;
+    color: black;
+
+    > div {
+      flex-basis: 100%;
+
+      span {
+        display: block;
+
+        &.title {}
+        &.desc {
+          font-size: 80%;
+        }
+      }
+    }
+
+    > span {
+      flex-basis: 25px;
+    }
+
+    &:hover, &:focus {
+      text-decoration: none;
+      color: @bold-accent;
+    }
+
+    + a {
+      border-top: 1px solid @bold-accent;
+    }
+  }
+}
+
+.user-name-tag {
+  .glyphicon {
+    margin-right: .25em;
+    font-size: 85%;
+  }
+}
+
+/* ui-select color fixes */
+.ui-select-bootstrap .ui-select-choices-row.active > a {
+  background-color: @bold-accent;
+  color: @bold-accent-secondary;
+}
+.btn-default-focus {
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px fade(@bold-accent, 60%);
+}
+
+@media (min-width: @screen-sm-min) {
+  span.form-padded-value {
+    padding: (@padding-base-vertical + 1) 0;
+    display: block;
+  }
+}
+
+.alert {
+  border-width: 1px 1px 1px 4em;
+  border-color: @bold-accent-border;
+  background-color: white;
+  color: black;
+  position: relative;
+
+  .alert-icon {
+    .glyphicon;
+    font-size: 150%;
+    line-height: 0;
+    color: white;
+    position: absolute;
+    left: -1.75em;
+    top: 50%;
+  }
+
+  &.alert-success .alert-icon {
+    .glyphicon-ok-circle;
+  }
+
+  &.alert-danger .alert-icon {
+    .glyphicon-remove-circle;
+  }
+
+  &.alert-info .alert-icon {
+    .glyphicon-info-sign;
+  }
+
+  &.alert-warning .alert-icon {
+    .glyphicon-warning-sign;
+  }
+}
+
+.tag-id-badge {
+  position: absolute;
+  right: 1.5em;
+  color: #888;
+
+  &.inline {
+    position: relative;
+    right: 0;
+    float: right;
+    margin-left: .25em;
+  }
+
+  &:before {
+    content: '(ID ';
+  }
+  &:after {
+    content: ')';
   }
 }

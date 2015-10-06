@@ -1,6 +1,7 @@
 options = require '../tools/optionsroute'
 middleware = require '../tools/middleware'
 privilegeLevels = require '../tools/privilegelevels'
+parseTagTree = require '../tools/tagtree'
 
 _ = require 'lodash'
 
@@ -19,22 +20,6 @@ INNER JOIN (
 ON cte.id = tmp.id
 AND cte.depth = tmp.topmost;
 '''
-
-parseTagTree = (tags) ->
-    tree = []
-    lookup = {}
-
-    _.each tags, (tag) ->
-        lookup[tag.id] = tag
-        tag.children = []
-
-    _.each tags, (tag) ->
-        if tag.parent? && lookup[tag.parent]?
-            lookup[tag.parent].children.push tag
-        else
-            tree.push tag
-
-    tree
 
 module.exports = (app, db) ->
     updateTagRelations = (req, res, row) ->

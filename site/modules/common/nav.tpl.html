@@ -7,6 +7,7 @@
         <li><a href="#" ui-sref="dyes">Dyes</a></li>
         <li><a href="#" ui-sref="storage">Hoard</a></li>
         <li><a href="#" ui-sref="legendary">Meteorlogicus</a></li>
+        <li><a href="#" ui-sref="adminMain" ng-if="user != null && user.ulevel >= 50">Admin</a></li>
     </ul>
 
     <div class="navbar-right">
@@ -23,9 +24,9 @@
             </li>
         </ul>
         <ul class="nav navbar-nav" ng-if="user != null">
-            <li>
-                <span>Hello, {{user.name}} ({{user.email}})</span>
-                <span>Ulevel={{user.ulevel}}</span>
+            <li class="navbar-user-section">
+                <span user-name-tag user="user"></span>
+                <span>{{user.email}}</span>
             </li>
             <li>
                 <a href="#" ng-click="logout()">Log out</a>

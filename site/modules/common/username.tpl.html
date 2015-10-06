@@ -1,0 +1,8 @@
+<span class="user-name-tag"><span class="glyphicon" ng-class="{
+    'glyphicon-star':         (user.ulevel == ulevels.admin),
+    'glyphicon-star-empty':   (user.ulevel == ulevels.editor),
+    'glyphicon-gift':         (user.ulevel == ulevels.privileged),
+    'glyphicon-ok':           (user.ulevel == ulevels.trusted),
+    'glyphicon-user':         (user.ulevel == ulevels.user),
+    'glyphicon-warning-sign': (user.ulevel == ulevels.disabled)
+}"></span>{{user.name}}</span>

@@ -1,0 +1,84 @@
+<div>
+    <h3 ng-if="tag.id != -1">Editing tag {{tagOriginalName}}</h3>
+    <h3 ng-if="tag.id == -1">Adding tag</h3>
+    <div ng-switch="msg">
+        <div ng-switch-when="successAdded" class="alert alert-success">
+            <span class="alert-icon"></span>
+            Tag was added successfully!
+        </div>
+        <div ng-switch-when="failureAdded" class="alert alert-danger">
+            <span class="alert-icon"></span>
+            Tag could not be added!
+        </div>
+        <div ng-switch-when="successEdited" class="alert alert-success">
+            <span class="alert-icon"></span>
+            Tag was edited successfully!
+        </div>
+        <div ng-switch-when="failureEdited" class="alert alert-danger">
+            <span class="alert-icon"></span>
+            Tag could not be edited!
+        </div>
+    </div>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="tag_editor_name" class="col-xs-12 col-sm-3 control-label">Name</label>
+            <div class="col-xs-12 col-sm-9">
+                <input id="tag_editor_name" class="form-control" ng-model="tag.name">
+            </div>
+        </div>
+        <div class="form-group" ng-if="tag.id != -1">
+            <label class="col-xs-12 col-sm-3 control-label">ID</label>
+            <div class="col-xs-12 col-sm-9">
+                <span class="form-padded-value">{{tag.id}}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tag_editor_prio" class="col-xs-12 col-sm-3 control-label">Priority</label>
+            <div class="col-xs-12 col-sm-9">
+                <input id="tag_editor_prio" class="form-control" ng-model="tag.priority">
+                <span class="help-block">Specifies the order in which tags are sorted.</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tag_editor_icon" class="col-xs-12 col-sm-3 control-label">Icon</label>
+            <div class="col-xs-12 col-sm-9">
+                <ui-select id="tag_editor_icon" ng-model="tag.icon">
+                    <ui-select-match placeholder="Please select an icon...">
+                        <span class="glyphicon glyphicon-tag" ng-if="$select.selected.value === null"></span>
+                        <span class="glyphicon glyphicon-{{$select.selected.value}}" ng-if="$select.selected.value !== null"></span>
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="item.value as item in icons.items | filter: $select.search track by item.value">
+                        <span class="glyphicon glyphicon-tag" ng-if="item.value === null"></span>
+                        <span class="glyphicon glyphicon-{{item.value}}" ng-if="item.value !== null"></span>
+                        <span ng-bind-html="item.name | highlight: $select.search"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="tag_editor_parent" class="col-xs-12 col-sm-3 control-label">Parent tag</label>
+            <div class="col-xs-12 col-sm-9">
+                <ui-select id="tag_editor_parent" ng-model="selectFields.parentTag">
+                    <ui-select-match placeholder="Type to search for a tag">
+                        <span class="tag-id-badge" ng-if="$select.selected.id !== null">{{$select.selected.id}}</span>
+                        <span class="glyphicon glyphicon-tag" ng-if="$select.selected.id !== null"></span>
+                        <span class="glyphicon glyphicon-remove-sign" ng-if="$select.selected.id === null"></span>
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in tagSuggestions | filter: $select.search track by item.id"
+                            refresh="loadTagSuggestions($select.search)" refresh-delay="1">
+                        <span class="tag-id-badge" ng-if="item.id !== null">{{item.id}}</span>
+                        <span class="glyphicon glyphicon-tag" ng-if="item.id !== null"></span>
+                        <span class="glyphicon glyphicon-remove-sign" ng-if="item.id === null"></span>
+                        {{item.name}}
+                    </ui-select-choices>
+                </ui-select>
+                <span class="help-block">The ID of the parent tag, or empty if at root level.</span>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button ng-click="submitTag()" class="btn btn-default">Save</button>
+        </div>
+    </form>
+</div>

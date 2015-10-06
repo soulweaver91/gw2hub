@@ -1,0 +1,57 @@
+<div class="container">
+    <h1>Editing media</h1>
+    <div ng-switch="msg">
+        <div ng-switch-when="successEdited" class="alert alert-success">
+            <span class="alert-icon"></span>
+            Media was edited successfully!
+        </div>
+        <div ng-switch-when="failureEdited" class="alert alert-danger">
+            <span class="alert-icon"></span>
+            Media could not be edited!
+        </div>
+    </div>
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="media_editor_name" class="col-xs-12 col-sm-3 control-label">Name</label>
+            <div class="col-xs-12 col-sm-9">
+                <input id="media_editor_name" class="form-control" ng-model="media.name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-xs-12 col-sm-3 control-label">Current location</label>
+            <div class="col-xs-12 col-sm-9">
+                <span class="form-padded-value">{{media.locator}}</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="media_editor_desc" class="col-xs-12 col-sm-3 control-label">Description</label>
+            <div class="col-xs-12 col-sm-9">
+                <textarea id="media_editor_desc" class="form-control" ng-model="media.description"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="media_editor_tags" class="col-xs-12 col-sm-3 control-label">Tags</label>
+            <div class="col-xs-12 col-sm-9">
+                <ui-select multiple id="media_editor_tags" ng-model="selectFields.selectedTags">
+                    <ui-select-match placeholder="Type to search for a tag">
+                        <span class="tag-id-badge inline" ng-if="$item.id !== null">{{$item.id}}</span>
+                        <span class="glyphicon glyphicon-tag" ng-if="$item.icon === null"></span>
+                        <span class="glyphicon glyphicon-{{$item.icon}}" ng-if="$item.icon !== null"></span>
+                        {{$item.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="item in tagSuggestions | filter: $select.search track by item.id"
+                                       refresh="loadTagSuggestions($select.search)" refresh-delay="1">
+                        <span class="tag-id-badge" ng-if="item.id !== null">{{item.id}}</span>
+                        <span class="glyphicon glyphicon-tag" ng-if="item.icon === null"></span>
+                        <span class="glyphicon glyphicon-{{item.icon}}" ng-if="item.icon !== null"></span>
+                        {{item.name}}
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button ng-click="submitMedia()" class="btn btn-default">Save</button>
+            <button ui-sref="media({hash: media.hash})" class="btn btn-default">Back to media</button>
+        </div>
+    </form>
+</div>

@@ -1,21 +1,28 @@
 options = require '../tools/optionsroute'
 middleware = require '../tools/middleware'
 privilegeLevels = require '../tools/privilegelevels'
+parseTagTree = require '../tools/tagtree'
 
 _ = require 'lodash'
 
 module.exports = (app, db) ->
     app.options '/tags', options ['GET', 'POST']
     app.options '/tags/:id', options ['GET', 'PATCH', 'DELETE']
+    app.options '/tags/suggest', options ['POST']
 
     app.get '/tags', (req, res, next) ->
-        db.all 'SELECT * FROM tTag', (err, rows) ->
+        db.all '''
+            SELECT *, (
+                SELECT COUNT(*) FROM tFileTagRel WHERE tag = tTag.id
+            ) AS selfCount
+            FROM tTag
+        ''', (err, rows) ->
             if err?
                 res.status 500
                 .json { status: 500, error: 'Database error' }
             else
                 res.status 200
-                .json rows
+                .json parseTagTree rows
 
     app.post '/tags'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
@@ -102,3 +109,23 @@ module.exports = (app, db) ->
                 else
                     res.status 404
                     .json { status: 404, error: 'no such id' }
+
+    app.post '/tags/suggest', (req, res, next) ->
+        if !req.body.q?
+            res.status 400
+            .json { status: 400, error: 'query is required' }
+        else
+
+            db.all '''
+                SELECT id, name, icon
+                FROM tTag
+                WHERE name LIKE ?
+                ORDER BY name ASC
+                LIMIT 10
+            ''', req.body.q + '%', (err, rows) ->
+                if err?
+                    res.status 500
+                    .json { status: 500, error: 'database error' }
+                else
+                    res.status 200
+                    .json rows
