@@ -1,5 +1,6 @@
 angular.module 'module.common', [
     'service.auth'
+    'service.utils'
 ]
 .controller 'navbarController', [
     '$scope', 'authService',
@@ -52,23 +53,10 @@ angular.module 'module.common', [
     scope:
         tags: '='
     controller: [
-        '$scope',
-        ($scope) ->
+        '$scope', 'tagUtilityService'
+        ($scope, tagUtilityService) ->
             $scope.$watch 'tags', (newVal, oldVal) ->
-                $scope.tagsParsed = []
-                walkTree = (path, tag) ->
-                    newPath = path.concat [tag.name]
-                    if tag.depth == 0
-                        $scope.tagsParsed.push
-                            path: newPath
-                            icon: tag.icon
-
-                    _.each tag.children, (subtag) ->
-                        walkTree newPath, subtag
-
-                _.each newVal, (tag) ->
-                    walkTree [], tag
-                console.log $scope.tagsParsed
+                $scope.tagsParsed = tagUtilityService.flattenTree newVal
     ]
 .directive 'userNameTag', ->
     restrict: 'A'

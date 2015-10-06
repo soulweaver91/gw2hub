@@ -117,7 +117,7 @@ module.exports = (app, db) ->
         else
 
             db.all '''
-                SELECT id, name
+                SELECT id, name, icon
                 FROM tTag
                 WHERE name LIKE ?
                 ORDER BY name ASC

@@ -17,6 +17,7 @@ verifyAdmin = [
 
 angular.module 'module.admin', [
     'service.auth'
+    'service.utils'
     'ui.select'
     'restangular'
     'ngSanitize'
@@ -194,15 +195,37 @@ angular.module 'module.admin', [
                     $scope.msg = 'failureAdded'
 ]
 .controller 'adminMediaEditController', [
-    '$scope', '$state', '$stateParams', 'Restangular', 'media',
-    ($scope, $state, $stateParams, Restangular, media) ->
+    '$scope', '$state', '$stateParams', 'Restangular', 'media', 'tagUtilityService',
+    ($scope, $state, $stateParams, Restangular, media, tagUtilityService) ->
         $scope.media = media
         $scope.msg = $stateParams.msg
+
+        $scope.selectFields = {
+            selectedTags: []
+        }
+        if $scope.media.tags?
+            _.each tagUtilityService.flattenTree($scope.media.tags), (tagHierarchy) ->
+                $scope.selectFields.selectedTags.push
+                    name: _.last tagHierarchy.path
+                    icon: tagHierarchy.icon
+                    id: tagHierarchy.id
+
+        $scope.loadTagSuggestions = (query) ->
+            return if query.length == 0
+            return $scope.tagSuggestions = [] if query.length < 3
+
+            Restangular.all 'tags/suggest'
+            .post
+                q: query
+            .then (res) ->
+                $scope.tagSuggestions = res
 
         $scope.submitMedia = ->
             values = _.pick $scope.media, [
                 'name', 'description'
             ]
+
+            values.tagIDs = _.pluck $scope.selectFields.selectedTags, 'id'
 
             # Cannot patch via the element directly, as Restangular attempts to use the ID instead of going by
             # the URL the resource was loaded from, and the hash is used as the endpoint identifier for the media
