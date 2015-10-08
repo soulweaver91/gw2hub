@@ -29,6 +29,7 @@
     "grunt-express": "1.4.0",
     "grunt-html2js": "^0.2.9",
     "grunt-newer": "^0.7.0",
+    "grunt-webfont": "^0.5.4",
     "lodash": "^2.4.1",
     "moment": "^2.8.3",
     "passport": "^0.2.1",
