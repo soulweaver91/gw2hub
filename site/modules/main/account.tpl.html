@@ -5,13 +5,27 @@
             <h2>Achievement points</h2>
             <div class="row">
                 <div class="col-xs-4" id="account_ap_total">
-                    <span class="ap-icon">{{account.ap.permanent + account.ap.historical + account.ap.daily + account.ap.monthly | number}}</span>
+                    <span-ap ap="account.ap.permanent + account.ap.historical + account.ap.daily + account.ap.monthly"></span-ap>
                 </div>
                 <div class="col-xs-8" id="account_ap_breakdown">
-                    <p id="account_ap_perm">Permanent: <span class="ap-icon">{{account.ap.permanent | number}}</span></p>
-                    <p id="account_ap_hist">Historical: <span class="ap-icon">{{account.ap.historical | number}}</span></p>
-                    <p id="account_ap_daily">Dailies: <span class="ap-icon">{{account.ap.daily | number}}</span></p>
-                    <p id="account_ap_monthly">Monthlies: <span class="ap-icon">{{account.ap.monthly | number}}</span></p>
+                    <p id="account_ap_perm">Permanent: <span-ap ap="account.ap.permanent"></span-ap></p>
+                    <p id="account_ap_hist">Historical: <span-ap ap="account.ap.historical"></span-ap></p>
+                    <p id="account_ap_daily">Dailies: <span-ap ap="account.ap.daily"></span-ap></p>
+                    <p id="account_ap_monthly">Monthlies: <span-ap ap="account.ap.monthly"></span-ap></p>
+                </div>
+            </div>
+        </div>
+        <div class="section">
+            <h2>Coin directive settings</h2>
+            <div class="row">
+                <div class="col-xs-12">
+                    <input class="form-control" ng-model="tempCoin" type="text">
+                    <input type="checkbox" ng-model="tempCoinRound" ng-change="tempCoin = tempCoin"> Round down
+                    <div>All:       <span-coin coin="tempCoin" round="tempCoinRound" mode="'gsc'"></span-coin></div>
+                    <div>All brief: <span-coin coin="tempCoin" round="tempCoinRound" mode="'gscbrief'"></span-coin></div>
+                    <div>Gold:      <span-coin coin="tempCoin" round="tempCoinRound" mode="'g'"></span-coin></div>
+                    <div>Silver:    <span-coin coin="tempCoin" round="tempCoinRound" mode="'s'"></span-coin></div>
+                    <div>Copper:    <span-coin coin="tempCoin" round="tempCoinRound" mode="'c'"></span-coin></div>
                 </div>
             </div>
         </div>
@@ -19,19 +33,19 @@
             <h2>Account bonuses</h2>
             <div class="row">
                 <p class="col-xs-3" id="account_bonus_gold">
-                    <span class="hub-icon coin-icon"></span>
+                    <span class="hubicon hubicon-coin"></span>
                     Gold +{{account.bonuses.gold}}%
                 </p>
                 <p class="col-xs-3" id="account_bonus_karma">
-                    <span class="hub-icon karma-icon"></span>
+                    <span class="hubicon hubicon-karma"></span>
                     Karma +{{account.bonuses.karma}}%
                 </p>
                 <p class="col-xs-3" id="account_bonus_xp">
-                    <span class="hub-icon xp-icon"></span>
+                    <span class="hubicon hubicon-xp"></span>
                     XP +{{account.bonuses.xp}}%
                 </p>
                 <p class="col-xs-3" id="account_bonus_mf">
-                    <span class="hub-icon mf-icon"></span>
+                    <span class="hubicon hubicon-magic-find"></span>
                     MF +{{account.bonuses.mf + account.luck.level}}%
                 </p>
             </div>
@@ -63,7 +77,7 @@
             <h2>Account medals</h2>
             <div class="row">
                 <div class="col-xs-12" ng-class="'rank-' + account.world.rank" id="account_medal_world">
-                    <span class="rank-icon"></span>
+                    <span class="rank-icon hubicon hubicon-waypoint"></span>
                     <div class="progress" id="account_medal_world_bar">
                         <div class="progress-bar progress-bar-success"
                              ng-style="{width: (account.world.progress).toFixed(2) + '%'}">
@@ -75,7 +89,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-12" ng-class="'rank-' + account.pvp.rank" id="account_medal_pvp">
-                    <span class="rank-icon"></span>
+                    <span class="rank-icon hubicon hubicon-pvp"></span>
                     <div class="progress" id="account_medal_pvp_bar">
                         <div class="progress-bar progress-bar-success"
                              ng-style="{width: (100 * account.pvp.progress / account.pvp.next).toFixed(2) + '%'}">
@@ -89,7 +103,7 @@
             </div>
             <div class="row">
                 <div class="col-xs-12" ng-class="'rank-' + account.wvw.medal.rank" id="account_medal_wvw">
-                    <span class="rank-icon"></span>
+                    <span class="rank-icon hubicon hubicon-pvp"></span>
                     <div class="progress" id="account_medal_wvw_bar">
                         <div class="progress-bar progress-bar-success"
                              ng-style="{width: (100 * account.wvw.medal.progress / account.wvw.medal.next).toFixed(2) + '%'}">
@@ -103,15 +117,15 @@
             </div>
             <div class="row">
                 <div class="col-xs-3" ng-class="{'rank-0': !account.orders.priory,   'rank-1': account.orders.priory  }" id="account_medal_priory">
-                    <span class="rank-icon"></span>
+                    <span class="rank-icon hubicon hubicon-durmand-priory"></span>
                     Durmand Priory
                 </div>
                 <div class="col-xs-3" ng-class="{'rank-0': !account.orders.vigil,    'rank-1': account.orders.vigil   }" id="account_medal_vigil">
-                    <span class="rank-icon"></span>
+                    <span class="rank-icon hubicon hubicon-vigil"></span>
                     Vigil
                 </div>
                 <div class="col-xs-3" ng-class="{'rank-0': !account.orders.whispers, 'rank-1': account.orders.whispers}" id="account_medal_whispers">
-                    <span class="rank-icon"></span>
+                    <span class="rank-icon hubicon hubicon-order-of-whispers"></span>
                     Order of Whispers
                 </div>
                 <div class="col-xs-3" ng-class="{'rank-0': !account.legendary,       'rank-1': account.legendary      }" id="account_medal_legendary">

@@ -8,11 +8,6 @@
 @icon-font-path: "static/";
 @input-border-focus: @bold-accent;
 
-@font-face {
-  font-family: 'GW2 Hub Symbols';
-  src: url('static/hubsymbols.ttf');
-}
-
 @bold-accent: #9d1011;
 @bold-accent-secondary: #ffffff;
 @bold-accent-border: darken(@bold-accent, 10%);
@@ -21,6 +16,12 @@
 @silver-color: #8d8d8d;
 @copper-color: #80211d;
 @karma-color: #6e0ea0;
+
+.hubicon {
+  &:hover, *:hover &, &:active, *:active & {
+    text-decoration: none;
+  }
+}
 
 html {
   height: 100%;
@@ -177,8 +178,7 @@ footer {
     width: 45px;
     text-align: center;
     display: inline-block;
-    font-size: 500%;
-    font-family: 'GW2 Hub Symbols';
+    font-size: 400%;
     line-height: 45px;
   }
 }
@@ -190,29 +190,11 @@ footer {
   }
 }
 
-#account_medal_priory   .rank-icon:before { content: '\e002'; }
-#account_medal_vigil    .rank-icon:before { content: '\e003'; }
-#account_medal_whispers .rank-icon:before { content: '\e004'; }
-
-// temp
-#account_medal_pvp       .rank-icon:before { content: '\e001'; }
-#account_medal_legendary .rank-icon:before { content: '\e001'; }
-#account_medal_wvw       .rank-icon:before { content: '\e001'; }
-#account_medal_world     .rank-icon:before { content: '\e001'; }
-
 .coin {
-  .coin-gold:after   { .hub-icon; content: '\e005'; color: #d3a222; }
-  .coin-silver:after { .hub-icon; content: '\e005'; color: #8d8d8d; }
-  .coin-copper:after { .hub-icon; content: '\e005'; color: #80211d; }
+  .coin-gold .hubicon   { color: #d3a222; }
+  .coin-silver .hubicon { color: #8d8d8d; }
+  .coin-copper .hubicon { color: #80211d; }
 }
-
-.hub-icon {
-  font-family: 'GW2 Hub Symbols';
-}
-.coin-icon:before  { content: '\e005'; }
-.karma-icon:before { content: '\e006'; }
-.xp-icon:before    { content: '\e007'; }
-.mf-icon:before    { content: '\e008'; }
 
 .latest-screen {
   width: 100%;
@@ -252,11 +234,6 @@ footer {
   .latest-ap-flavor {
     font-style: italic;
   }
-}
-
-.ap-icon:after {
-  font-family: 'GW2 Hub Symbols';
-  content: '\e001';
 }
 
 #account_ap, #account_bonuses {
@@ -391,7 +368,7 @@ footer {
 
         @media (max-width: @screen-sm-max) {
           width: auto;
-          min-height: none;
+          min-height: 0;
         }
 
         img, video {
