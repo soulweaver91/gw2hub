@@ -87,7 +87,7 @@ module.exports = (grunt) ->
                 files: [
                     expand: true
                     cwd: 'intermediate'
-                    src: ['*', '**/*', '!.gitignore']
+                    src: ['*', '**/*', '!.gitignore', '!*.less']
                     dest: 'release/' + settings.deployDir
                 ]
 
@@ -132,6 +132,7 @@ module.exports = (grunt) ->
                     templateOptions:
                         baseClass: 'hubicon'
                         classPrefix: 'hubicon-'
+                    stylesheet: 'less'
                     relativeFontPath: 'static'
                     htmlDemo: settings.profile == 'dev'
                     engine: 'node'
