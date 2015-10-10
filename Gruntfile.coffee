@@ -23,11 +23,18 @@ module.exports = (grunt) ->
         less:
             options:
                 sourceMap: true
+                # In the 1.x series of grunt-contrib-less, source map location is not chosen correctly without manually
+                # specifying the name. Also, source map generation will cause a message "File undefined created." appear
+                # on the console; it is harmless but looks like it isn't.
+                # Relevant bugs:
+                # https://github.com/gruntjs/grunt-contrib-less/issues/236
+                # https://github.com/gruntjs/grunt-contrib-less/issues/264
+                sourceMapURL: 'styles.css.map'
                 outputSourceFiles: true
                 cleancss: settings.profile != 'dev'
             site:
                 files:
-                    'intermediate/main.css': 'site/styles/main.less'
+                    'intermediate/styles.css': 'site/styles/main.less'
 
         powerbuild:
             options:
