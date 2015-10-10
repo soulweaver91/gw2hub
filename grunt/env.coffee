@@ -2,7 +2,7 @@ async = require 'async'
 fs = require 'fs'
 _ = require 'lodash'
 
-settings = require('../settings').get()
+settings = require('../configmanager').get()
 
 module.exports = (grunt) ->
     grunt.registerTask 'createEnv', 'Creates the appropriate environment script.', ->

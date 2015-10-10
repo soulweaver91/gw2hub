@@ -3,7 +3,7 @@ async = require 'async'
 sqlite = require 'sqlite3'
 q = require 'q'
 
-settings = require('../settings').get()
+settings = require('../configmanager').get()
 security = require '../api/tools/security'
 privilegeLevels = require '../api/tools/privilegelevels'
 

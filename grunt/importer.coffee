@@ -3,7 +3,7 @@ async = require 'async'
 sqlite = require 'sqlite3'
 _ = require 'lodash'
 
-settings = require('../settings').get()
+settings = require('../configmanager').get()
 
 normalizeTagName = (name, fullPath) ->
     name = name.replace(/_/g, ' ')

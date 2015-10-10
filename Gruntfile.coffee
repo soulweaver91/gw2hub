@@ -2,7 +2,7 @@
 require 'coffee-script/register'
 coffee = require 'coffee-script'
 
-settingsProvider = require('./settings')
+settingsProvider = require './configmanager'
 
 module.exports = (grunt) ->
     settingsProvider.init grunt

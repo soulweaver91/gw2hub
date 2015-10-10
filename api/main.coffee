@@ -8,7 +8,7 @@ passport = require 'passport'
 strategy = require('passport-local').Strategy
 _ = require 'lodash'
 
-settings = require('../settings').get()
+settings = require('../configmanager').get()
 security = require './tools/security'
 
 sqlite = require 'sqlite3'

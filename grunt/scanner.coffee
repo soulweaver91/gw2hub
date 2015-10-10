@@ -8,7 +8,7 @@ checksum = require 'checksum'
 moment = require 'moment'
 gm = require 'gm'
 
-settings = require('../settings').get()
+settings = require('../configmanager').get()
 
 getFileHashes = (paths, cb) ->
     tmpRelations = {}

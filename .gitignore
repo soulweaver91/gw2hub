@@ -5,7 +5,7 @@ intermediate/*
 release/*
 
 # This file must be created by whoever uses the code; it will not be included in the repository for safety reasons
-apisecret.coffee
+settings.coffee
 
 # Don't ignore .gitignore files in the temporary folders
 !db/.gitignore
