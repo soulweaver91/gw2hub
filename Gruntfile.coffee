@@ -16,6 +16,7 @@ module.exports = (grunt) ->
     grunt.loadNpmTasks 'grunt-html2js'
     grunt.loadNpmTasks 'grunt-express'
     grunt.loadNpmTasks 'grunt-newer'
+    grunt.loadNpmTasks 'grunt-webfont'
     grunt.loadNpmTasks 'powerbuild'
 
     grunt.initConfig {
@@ -86,7 +87,7 @@ module.exports = (grunt) ->
                 files: [
                     expand: true
                     cwd: 'intermediate'
-                    src: ['*', '**/*', '!.gitignore']
+                    src: ['*', '**/*', '!.gitignore', '!*.less']
                     dest: 'release/' + settings.deployDir
                 ]
 
@@ -102,7 +103,7 @@ module.exports = (grunt) ->
                 files: ['site/index.html', 'site/static/*']
                 tasks: ['newer:copy:static', 'newer:copy:site']
             uiScripts:
-                files: ['site/**/*.html','site/**/*.coffee']
+                files: ['site/**/*.html','site/**/*.coffee', 'site/icons/*.svg']
                 tasks: ['build']
             media:
                 files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
@@ -120,13 +121,30 @@ module.exports = (grunt) ->
                 options:
                     server: 'api/main.coffee'
                     port: settings.APIPort
+
+        webfont:
+            icons:
+                src: 'site/icons/*.svg'
+                dest: 'intermediate/static'
+                destCss: 'intermediate'
+                options:
+                    font: 'gw2hubicons'
+                    templateOptions:
+                        baseClass: 'hubicon'
+                        classPrefix: 'hubicon-'
+                    stylesheet: 'less'
+                    relativeFontPath: 'static'
+                    htmlDemo: settings.profile == 'dev'
+                    engine: 'node'
+                    fontHeight: 512
+                    descent: -128
     }
 
     grunt.loadTasks 'grunt'
 
     # The point of using an intermediate folder is that if the build fails, the live folder won't end up in a broken state
     grunt.registerTask 'build', ['clean:intermediate', 'powerbuild:site', 'uglify:site', 'html2js:site', 'createEnv',
-                                 'less', 'copy:static', 'copy:vendorFonts', 'clean:site', 'copy:site']
+                                 'webfont', 'less', 'copy:static', 'copy:vendorFonts', 'clean:site', 'copy:site']
     grunt.registerTask 'runAPI', ['build', 'syncFileDB', 'express:api', 'express-keepalive']
     grunt.registerTask 'develop', ['build', 'syncFileDB', 'express:api', 'chokidar']
 

@@ -1,7 +1,6 @@
 <div>
     <div ng-repeat="tag in tagsParsed">
-        <span class="glyphicon glyphicon-{{tag.icon}}" ng-if="tag.icon"></span>
-        <span class="glyphicon glyphicon-tag" ng-if="!tag.icon"></span>
+        <span class="{{tag.icon | tagIconToClasses}}"></span>
         <span ng-repeat="part in tag.path" class="media-tag" ng-class="{last: $last}">
             {{part}}
             <span ng-if="!$last" class="glyphicon glyphicon-chevron-right"></span>

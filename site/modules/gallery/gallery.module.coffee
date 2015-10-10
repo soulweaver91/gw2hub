@@ -58,7 +58,7 @@ angular.module 'module.gallery', [
                     parseInt(uiState.year) == branchState.params.year &&
                     ((!uiState.month? && !branchState.params.month?) ||
                         parseInt(uiState.month) == branchState.params.month)
-            leafClasses: 'glyphicon-calendar'
+            leafClasses: 'g:calendar'
 
         $scope.navtree = {
             name: 'Navigation'

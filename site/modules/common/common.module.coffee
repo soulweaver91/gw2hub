@@ -115,9 +115,9 @@ angular.module 'module.common', [
                         }"
                     ></span>
                     <a href="" ng-if="branch.state" ng-click="select()">
-                        <span class="navtree_toggler glyphicon {{settings.leafClasses}}"
+                        <span class="navtree_toggler {{settings.leafClasses | tagIconToClasses}}"
                             ng-if="branch.children.length == 0 && !branch.icon"></span>
-                        <span class="navtree_toggler glyphicon glyphicon-{{branch.icon}}"
+                        <span class="navtree_toggler {{branch.icon | tagIconToClasses}}"
                             ng-if="branch.children.length == 0 && branch.icon"></span>
                         {{branch.name}}
                     </a>
@@ -133,3 +133,87 @@ angular.module 'module.common', [
             $compile($template)($scope)
             element.append $template
 ]
+.filter 'tagIconToClasses', ->
+    (icon) ->
+        if !icon? || !_.isString icon || icon.indexOf(':') < 0
+            return 'glyphicon glyphicon-tag'
+
+        parts = icon.split ':', 2
+        switch parts[0]
+            when 'g'
+                return "glyphicon glyphicon-#{parts[1]}"
+            when 'h'
+                return "hubicon hubicon-#{parts[1]}"
+.directive 'spanAp', ->
+    restrict: 'E'
+    scope:
+        ap: '='
+        pre: '@'
+        post: '@'
+    template: '<span class="ap">{{pre}}{{ap | number}}{{post}}<span class="hubicon hubicon-arenanet"></span></span>'
+.directive 'spanCoin', ->
+    restrict: 'E'
+    scope:
+        coin: '='
+        pre: '@'
+        post: '@'
+        mode: '='
+        round: '='
+    template: '''
+              <span class="coin" ng-class="{'coin-negative': negative}">
+                {{pre}}<span ng-if="units.g == 0 && mode == 'gsc' && negative">-</span
+                ><span class="coin-gold" ng-if="units.g !== null">{{units.g | number}}<span class="hubicon hubicon-coin"></span></span>
+                <span class="coin-silver" ng-if="units.s !== null">{{units.s | number}}<span class="hubicon hubicon-coin"></span></span>
+                <span class="coin-copper" ng-if="units.c !== null">{{units.c | number}}<span class="hubicon hubicon-coin"></span></span>{{post}}
+              </span>
+              '''
+    controller: ($scope) ->
+        if !$scope.mode?
+            $scope.mode = 'gsc'
+        $scope.units = { g: null, s: null, c: null }
+        $scope.negative = false
+
+        updateUnits = (coin) ->
+            coin = parseFloat coin
+
+            # Store negativity and make positive, it'll be added back later
+            $scope.negative = false
+            if coin < 0
+                $scope.negative = true
+                coin *= -1
+
+            switch $scope.mode
+                when 'g'
+                    $scope.units = { g: coin / 10000, s: null, c: null }
+                when 's'
+                    $scope.units = { g: null, s: coin / 100, c: null }
+                when 'c'
+                    $scope.units = { g: null, s: null, c: coin }
+                when 'gsc', 'gscbrief'
+                    $scope.units = {
+                        g: Math.floor(coin / 10000),
+                        s: Math.floor(coin / 100) % 100,
+                        c: coin % 100
+                    }
+
+            if $scope.mode == 'gscbrief'
+                $scope.units = _.each $scope.units, (v, k) -> $scope.units[k] = if v > 0 then v else null
+                if _.all($scope.units, (unit) -> unit == null)
+                    $scope.units.c = 0
+
+            if $scope.round
+                $scope.units = _.each $scope.units, (v, k) -> $scope.units[k] = if v != null then Math.floor v else null
+
+            # Make the highest displayed unit negative.
+            if $scope.negative
+                _.each $scope.units, (v, k) ->
+                    if v != null
+                        $scope.units[k] *= -1
+
+                        # Return from _.each
+                        false
+
+            $scope.units = _.each $scope.units, (v, k) -> $scope.units[k] = if _.isNaN(v) then 0 else v
+
+        updateUnits $scope.coin
+        $scope.$watch 'coin', updateUnits

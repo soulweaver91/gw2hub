@@ -6,19 +6,21 @@ angular.module 'service.utils', [
         {
             flattenTree: (tree) ->
                 flattened = []
-                walkTree = (path, tag) ->
+                walkTree = (path, tag, lastIcon) ->
                     newPath = path.concat [tag.name]
+                    newIcon = if tag.icon? then tag.icon else lastIcon
+
                     if tag.depth == 0
                         flattened.push
                             path: newPath
-                            icon: tag.icon
+                            icon: newIcon
                             id: tag.id
 
                     _.each tag.children, (subtag) ->
-                        walkTree newPath, subtag
+                        walkTree newPath, subtag, newIcon
 
                 _.each tree, (tag) ->
-                    walkTree [], tag
+                    walkTree [], tag, null
 
                 return flattened
         }
