@@ -35,15 +35,13 @@
                 <ui-select multiple id="media_editor_tags" ng-model="selectFields.selectedTags">
                     <ui-select-match placeholder="Type to search for a tag">
                         <span class="tag-id-badge inline" ng-if="$item.id !== null">{{$item.id}}</span>
-                        <span class="glyphicon glyphicon-tag" ng-if="$item.icon === null"></span>
-                        <span class="glyphicon glyphicon-{{$item.icon}}" ng-if="$item.icon !== null"></span>
+                        <span class="{{$item.icon | tagIconToClasses}}"></span>
                         {{$item.name}}
                     </ui-select-match>
                     <ui-select-choices repeat="item in tagSuggestions | filter: $select.search track by item.id"
                                        refresh="loadTagSuggestions($select.search)" refresh-delay="1">
                         <span class="tag-id-badge" ng-if="item.id !== null">{{item.id}}</span>
-                        <span class="glyphicon glyphicon-tag" ng-if="item.icon === null"></span>
-                        <span class="glyphicon glyphicon-{{item.icon}}" ng-if="item.icon !== null"></span>
+                        <span class="{{item.icon | tagIconToClasses}}"></span>
                         {{item.name}}
                     </ui-select-choices>
                 </ui-select>

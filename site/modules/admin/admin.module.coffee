@@ -103,7 +103,7 @@ angular.module 'module.admin', [
         $scope.tagSettings =
             isActive: (branchState, uiState) ->
                 branchState? && parseInt(uiState.id) == branchState.params?.id
-            leafClasses: 'glyphicon-tag'
+            leafClasses: 'g:tag'
             maxExpand: 1
 
         Restangular.all 'tags'
@@ -131,11 +131,18 @@ angular.module 'module.admin', [
         $scope.tagOriginalName = tag.name
         $scope.icons =
             items: [
-                {value: null, name: 'Default'}
-                {value: 'user', name: 'Player'}
-                {value: 'trash', name: 'Trash'}
-                {value: 'fire', name: 'Fire'}
-                {value: 'leaf', name: 'Leaf'}
+                { value: null,                      name: 'Default' }
+                { value: 'h:player-marker',         name: 'Player' }
+                { value: 'h:npc-marker',            name: 'NPC' }
+                { value: 'h:enemy-marker',          name: 'Enemy' }
+                { value: 'h:dungeon',               name: 'Dungeon' }
+                { value: 'h:point-of-interest',     name: 'Point of interest' }
+                { value: 'h:vista',                 name: 'Vista' }
+                { value: 'h:hero-challenge',        name: 'Hero challenge' }
+                { value: 'h:renown-heart',          name: 'Renown heart' }
+                { value: 'h:waypoint',              name: 'Waypoint' }
+                { value: 'h:compass',               name: 'Map location' }
+                { value: 'h:asura-gate',            name: 'Asura gate' }
             ]
             options: {}
 
@@ -145,6 +152,7 @@ angular.module 'module.admin', [
         noParentItem =
             id: null
             name: 'No parent'
+            icon: 'g:remove-sign'
         $scope.tagSuggestions = [noParentItem]
         $scope.loadTagSuggestions = (query) ->
             return if query.length == 0

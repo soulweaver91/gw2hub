@@ -115,9 +115,9 @@ angular.module 'module.common', [
                         }"
                     ></span>
                     <a href="" ng-if="branch.state" ng-click="select()">
-                        <span class="navtree_toggler glyphicon {{settings.leafClasses}}"
+                        <span class="navtree_toggler {{settings.leafClasses | tagIconToClasses}}"
                             ng-if="branch.children.length == 0 && !branch.icon"></span>
-                        <span class="navtree_toggler glyphicon glyphicon-{{branch.icon}}"
+                        <span class="navtree_toggler {{branch.icon | tagIconToClasses}}"
                             ng-if="branch.children.length == 0 && branch.icon"></span>
                         {{branch.name}}
                     </a>
@@ -133,6 +133,17 @@ angular.module 'module.common', [
             $compile($template)($scope)
             element.append $template
 ]
+.filter 'tagIconToClasses', ->
+    (icon) ->
+        if !icon? || !_.isString icon || icon.indexOf(':') < 0
+            return 'glyphicon glyphicon-tag'
+
+        parts = icon.split ':', 2
+        switch parts[0]
+            when 'g'
+                return "glyphicon glyphicon-#{parts[1]}"
+            when 'h'
+                return "hubicon hubicon-#{parts[1]}"
 .directive 'spanAp', ->
     restrict: 'E'
     scope:
