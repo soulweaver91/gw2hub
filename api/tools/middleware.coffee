@@ -1,21 +1,22 @@
 privilegeLevels = require './privilegelevels'
+httpStatus = require 'http-status-codes'
 
 module.exports =
     requireLoggedIn: (req, res, next) ->
         if !req.isAuthenticated()
-            res.status 403
-            .json { status: 403, error: 'not logged in' }
+            res.status httpStatus.FORBIDDEN
+            .json { status: httpStatus.FORBIDDEN, error: 'not logged in' }
         else
             next()
 
     requireMinPrivilegeLevel: (level) ->
         (req, res, next) ->
             if !req.isAuthenticated()
-                res.status 403
-                .json { status: 403, error: 'not logged in' }
+                res.status httpStatus.FORBIDDEN
+                .json { status: httpStatus.FORBIDDEN, error: 'not logged in' }
             else
                 if req.user.ulevel >= level
                     return next()
 
-                res.status 403
-                .json { status: 403, error: 'insufficient privilege level' }
+                res.status httpStatus.FORBIDDEN
+                .json { status: httpStatus.FORBIDDEN, error: 'insufficient privilege level' }

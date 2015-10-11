@@ -1,4 +1,5 @@
 passport = require 'passport'
+httpStatus = require 'http-status-codes'
 
 options = require '../tools/optionsroute'
 
@@ -11,31 +12,31 @@ module.exports = (app, db) ->
         passport.authenticate('local', { failWithError: true })
         , (req, res, next) ->
             # Login succeeded
-            res.status 200
+            res.status httpStatus.OK
             .json req.user
         , (err, req, res, next) ->
             # Login failed
-            res.status 401
+            res.status httpStatus.UNAUTHORIZED
             .json { error: 'invalid credentials' }
 
     app.post '/auth/logout', (req, res, next) ->
         req.logout()
 
-        res.status 200
-        .json { status: 200 }
+        res.status httpStatus.OK
+        .json { status: httpStatus.OK }
 
     app.get '/auth/status', (req, res, next) ->
         if req.isAuthenticated()
-            res.status 200
+            res.status httpStatus.OK
             .json {
-                status: 200
+                status: httpStatus.OK
                 logged_in: true
                 user: req.user
             }
         else
-            res.status 200
+            res.status httpStatus.OK
             .json {
-                status: 200
+                status: httpStatus.OK
                 logged_in: false
                 user: null
             }

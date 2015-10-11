@@ -1,4 +1,5 @@
 _ = require 'lodash'
+httpStatus = require 'http-status-codes'
 
 module.exports = (options) ->
     if not _.isArray options
@@ -10,5 +11,5 @@ module.exports = (options) ->
         res.header 'Access-Control-Allow-Headers', 'Content-Type'
         res.header 'Access-Control-Max-Age', 0
 
-        res.status 204
+        res.status httpStatus.NO_CONTENT
         .end()

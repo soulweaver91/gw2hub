@@ -176,7 +176,9 @@ requestWithoutCache = (path, perms, cb) ->
 module.exports =
     init: (cb) ->
         initialize cb
-        setTimeout cache.purge(false), cache.timeout
+        setTimeout ->
+            cache.purge false
+        , cache.timeout
     getAccount: (cb) ->
         requestWithCache 'account', ['account'], cb
     ErrorCode: ErrorCode
