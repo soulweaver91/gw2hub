@@ -152,6 +152,9 @@ requestWithCache = (path, perms, cb) ->
         # Callback arguments: error, response, requested item
         if cache.isStale path
             request path, interpreted (err, body) ->
+                if _.isArray body
+                    body = { data: body }
+
                 if !err?
                     cache.store path, body
 
@@ -169,6 +172,9 @@ requestWithoutCache = (path, perms, cb) ->
         return cb err if err?
 
         request path, interpreted (err, body) ->
+            if _.isArray body
+                body = { data: body }
+
             body.cachedResponse = false
 
             (cb)(err, body)
@@ -181,6 +187,12 @@ module.exports =
         , cache.timeout
     getAccount: (cb) ->
         requestWithCache 'account', ['account'], cb
+    getCharacters: (cb) ->
+        requestWithCache 'characters?page=0', [], cb
+    getCharacter: (name, cb) ->
+        # Assuming the cache database isn't tampered with, these should always be available.
+        name = encodeURIComponent name
+        requestWithCache "characters/#{name}", [], cb
     ErrorCode: ErrorCode
     fatalAPIErrorDefaultResponse: (err, res) ->
         if err.apiError?
