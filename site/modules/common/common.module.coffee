@@ -217,3 +217,9 @@ angular.module 'module.common', [
 
         updateUnits $scope.coin
         $scope.$watch 'coin', updateUnits
+.filter 'momentTime', ->
+    (timestamp, format) ->
+        if !format?
+            format = 'lll'
+
+        moment(timestamp).format format

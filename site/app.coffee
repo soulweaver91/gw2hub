@@ -14,10 +14,6 @@ angular.module 'gw2hub', [
     '$stateProvider', '$urlRouterProvider', 'RestangularProvider', 'uiSelectConfig'
     ($stateProvider, $urlRouterProvider, RestangularProvider, uiSelectConfig) ->
         $stateProvider
-        .state 'main',
-            url: '/'
-            templateUrl: 'modules/main/main.tpl.html'
-            controller: 'hubMainController'
         .state 'future',
             templateUrl: 'modules/common/future.tpl.html'
 
@@ -48,5 +44,9 @@ angular.module 'gw2hub', [
                 # Failure upon initializing, probably tried to go to a restricted page.
                 # Usually, we'd just prevent the state change and stay where we were, but now we have no state we're
                 # coming from, so go to the front page instead
-                $state.go 'main'
+
+                if toState.name != 'main'
+                    $state.go 'main'
+                else
+                    # do nothing, we are stuck
 ]
