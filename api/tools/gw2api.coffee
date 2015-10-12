@@ -188,11 +188,11 @@ module.exports =
     getAccount: (cb) ->
         requestWithCache 'account', ['account'], cb
     getCharacters: (cb) ->
-        requestWithCache 'characters?page=0', [], cb
+        requestWithCache 'characters?page=0', ['account', 'characters'], cb
     getCharacter: (name, cb) ->
         # Assuming the cache database isn't tampered with, these should always be available.
         name = encodeURIComponent name
-        requestWithCache "characters/#{name}", [], cb
+        requestWithCache "characters/#{name}", ['account', 'characters'], cb
     ErrorCode: ErrorCode
     fatalAPIErrorDefaultResponse: (err, res) ->
         if err.apiError?
