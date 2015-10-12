@@ -1,0 +1,81 @@
+<div class="container">
+    <h1>Characters</h1>
+
+    <div class="character-list-filters">
+        <div class="filters-search">
+            <input class="form-control" type="text" ng-model="filters.search" placeholder="Search...">
+        </div>
+        <div class="filters-sort">
+            Sort by...
+            <select class="form-control" ng-model="filters.sort" ng-options="i.key as i.label for i in filters.sortOptions"></select>
+        </div>
+        <div class="filters-race">
+            Filter by race:
+            <div>
+                <span ng-repeat="(name, field) in filters.races">
+                    <span class="hubicon hubicon-{{name | lowercase}} character-list-filter-icon"
+                          title="{{name}}"
+                          ng-class="{colored: filters.races[name], muted: !filters.races[name]}"
+                          ng-click="filters.races[name] = !filters.races[name]"></span>
+                </span>
+            </div>
+        </div>
+        <div class="filters-profession">
+            Filter by profession:
+            <div>
+                <span ng-repeat="(name, field) in filters.professions">
+                    <span class="hubicon hubicon-{{name | lowercase}} character-list-filter-icon"
+                          title="{{name}}"
+                          ng-class="{colored: filters.professions[name], muted: !filters.professions[name]}"
+                          ng-click="filters.professions[name] = !filters.professions[name]"></span>
+                </span>
+            </div>
+        </div>
+        <div class="filters-gender">
+            Filter by gender:
+            <div>
+                <span ng-repeat="(name, field) in filters.genders">
+                    <span class="hubicon hubicon-{{name | lowercase}} character-list-filter-icon"
+                          title="{{name}}"
+                          ng-class="{colored: filters.genders[name], muted: !filters.genders[name]}"
+                          ng-click="filters.genders[name] = !filters.genders[name]"></span>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-group character-list">
+        <div class="list-group-item character-list-entry" ng-repeat="char in filteredChars = (characters | filter: filterChars | orderBy: filters.sort)">
+            <div>
+                <a class="character-name" href="#" ui-sref="character({id: char.id})">
+                    {{char.name}}
+                    <span class="text-muted" ng-if="char.deleted">(deleted)</span>
+                </a>
+                <ul class="character-details">
+                    <li title="Birthday">
+                        <span class="glyphicon glyphicon-gift"></span>
+                        {{char.created | momentTime}}
+                    </li>
+                    <li title="Play time" ng-if="!char.deleted">
+                        <span class="glyphicon glyphicon-time"></span>
+                        {{char.age | charAge}}
+                    </li>
+                    <li title="Deaths" ng-if="!char.deleted">
+                        <!-- Replace this one later with a unique icon. -->
+                        <span class="hubicon hubicon-necromancer"></span>
+                        {{char.deaths | number}}
+                    </li>
+                </ul>
+            </div>
+            <span class="level" ng-if="!char.deleted"><span class="level-label">Lv.</span>{{char.level}}</span>
+            <span class="hubicon colored hubicon-attach-to-next hubicon-{{char.gender | lowercase}}"></span>
+            <span class="hubicon hubicon-huge colored hubicon-{{char.race | lowercase}}" title="{{char.race}}"></span>
+            <span class="hubicon hubicon-huge colored hubicon-{{char.profession | lowercase}}" title="{{char.profession}}"></span>
+        </div>
+        <div class="list-group-item character-list-entry" ng-if="filteredChars.length == 0">
+            <div>
+                No characters match the selected filters.
+            </div>
+        </div>
+    </div>
+</div>
