@@ -1,4 +1,5 @@
 options = require '../tools/optionsroute'
+httpStatus = require 'http-status-codes'
 
 module.exports = (app, db) ->
     app.options '/up', options ['GET']
@@ -7,8 +8,8 @@ module.exports = (app, db) ->
         db.run "SELECT COUNT(*) FROM tUser"
         , (err) ->
             if err?
-                res.status 200
-                .json { status: 200, api_status: 'down' }
+                res.status httpStatus.OK
+                .json { status: httpStatus.OK, api_status: 'down' }
             else
-                res.status 200
-                .json { status: 200, api_status: 'up' }
+                res.status httpStatus.OK
+                .json { status: httpStatus.OK, api_status: 'up' }

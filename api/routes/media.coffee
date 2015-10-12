@@ -2,7 +2,9 @@ options = require '../tools/optionsroute'
 middleware = require '../tools/middleware'
 privilegeLevels = require '../tools/privilegelevels'
 parseTagTree = require '../tools/tagtree'
+commonResponses = require '../tools/commonresponses'
 
+httpStatus = require 'http-status-codes'
 _ = require 'lodash'
 
 recursiveTagQuery = '''
@@ -24,86 +26,69 @@ AND cte.depth = tmp.topmost;
 module.exports = (app, db) ->
     updateTagRelations = (req, res, row) ->
         db.all 'SELECT tag FROM tFileTagRel WHERE file = ?', row.id, (err, taglist) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'database error' }
-            else
-                tagsFromDB = _.pluck taglist, 'tag'
+            return commonResponses.databaseError res if err?
 
-                addTags = _.difference req.body.tagIDs, tagsFromDB
-                delTags = _.difference tagsFromDB, req.body.tagIDs
+            tagsFromDB = _.pluck taglist, 'tag'
 
-                db.serialize ->
-                    stmtAdd = db.prepare 'INSERT INTO tFileTagRel (file, tag) VALUES (?, ?)'
-                    _.each addTags, (tagID) ->
-                        stmtAdd.run row.id, tagID
+            addTags = _.difference req.body.tagIDs, tagsFromDB
+            delTags = _.difference tagsFromDB, req.body.tagIDs
 
-                    stmtDel = db.prepare 'DELETE FROM tFileTagRel WHERE file = ? AND tag = ?'
-                    _.each delTags, (tagID) ->
-                        stmtDel.run row.id, tagID
+            db.serialize ->
+                stmtAdd = db.prepare 'INSERT INTO tFileTagRel (file, tag) VALUES (?, ?)'
+                _.each addTags, (tagID) ->
+                    stmtAdd.run row.id, tagID
 
-                    stmtAdd.finalize()
-                    stmtDel.finalize()
+                stmtDel = db.prepare 'DELETE FROM tFileTagRel WHERE file = ? AND tag = ?'
+                _.each delTags, (tagID) ->
+                    stmtDel.run row.id, tagID
 
-                    db.all recursiveTagQuery, row.id, (err, rows) ->
-                        if err?
-                            res.status 500
-                            .json { status: 500, error: 'database error' }
-                        else
-                            row.tags = parseTagTree rows
-                            res.status 200
-                            .json row
+                stmtAdd.finalize()
+                stmtDel.finalize()
+
+                db.all recursiveTagQuery, row.id, (err, rows) ->
+                    return commonResponses.databaseError res if err?
+
+                    row.tags = parseTagTree rows
+                    res.status httpStatus.OK
+                    .json row
 
     app.options '/media/:id', options ['GET', 'PATCH']
 
     app.get '/media/:id', (req, res, next) ->
         db.get 'SELECT * FROM tFile WHERE hash = ?', req.params.id, (err, row) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'database error' }
+            return commonResponses.databaseError res if err?
+
+            if row?
+                db.all recursiveTagQuery, row.id, (err, rows) ->
+                    return commonResponses.databaseError res if err?
+
+                    row.tags = parseTagTree rows
+                    res.status httpStatus.OK
+                    .json row
             else
-                if row?
-                    db.all recursiveTagQuery, row.id, (err, rows) ->
-                        if err?
-                            res.status 500
-                            .json { status: 500, error: 'database error' }
-                        else
-                            row.tags = parseTagTree rows
-                            res.status 200
-                            .json row
-                else
-                    res.status 404
-                    .json { status: 404, error: 'no such id' }
+                return commonResponses.badID res
 
     app.patch '/media/:id'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
     , (req, res, next) ->
         db.get 'SELECT * FROM tFile WHERE hash = ?', req.params.id, (err, row) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'database error' }
-            else
-                if row?
-                    row = _.merge row, _.pick req.body, ['name', 'description']
+            return commonResponses.databaseError res if err?
 
-                    db.run 'UPDATE tFile SET name = ?, description = ? WHERE hash = ?',
-                        row.name, row.description, req.params.id, (err) ->
-                        if err?
-                            res.status 500
-                            .json { status: 500, error: 'database error' }
-                        else
-                            # Update the tag bindings if the tag array was present
-                            if req.body.tagIDs?
-                                updateTagRelations req, res, row
-                            else
-                                db.all recursiveTagQuery, row.id, (err, rows) ->
-                                    if err?
-                                        res.status 500
-                                        .json { status: 500, error: 'database error' }
-                                    else
-                                        row.tags = parseTagTree rows
-                                        res.status 200
-                                        .json row
-                else
-                    res.status 404
-                    .json { status: 404, error: 'no such id' }
+            if row?
+                row = _.merge row, _.pick req.body, ['name', 'description']
+
+                db.run 'UPDATE tFile SET name = ?, description = ? WHERE hash = ?', row.name, row.description, req.params.id, (err) ->
+                    return commonResponses.databaseError res if err?
+
+                    # Update the tag bindings if the tag array was present
+                    if req.body.tagIDs?
+                        updateTagRelations req, res, row
+                    else
+                        db.all recursiveTagQuery, row.id, (err, rows) ->
+                            return commonResponses.databaseError res if err?
+
+                            row.tags = parseTagTree rows
+                            res.status httpStatus.OK
+                            .json row
+            else
+                return commonResponses.badID res

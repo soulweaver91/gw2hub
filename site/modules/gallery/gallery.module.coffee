@@ -139,8 +139,6 @@ angular.module 'module.gallery', [
     controller: [
         '$scope', '$window', 'overlayService'
         ($scope, $window, overlayService) ->
-            $scope.image.friendlyDate = moment($scope.image.timestamp).format('lll')
-
             $scope.openImg = ->
                 overlayService.display $scope.image
     ]

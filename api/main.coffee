@@ -10,10 +10,15 @@ _ = require 'lodash'
 
 settings = require('../configmanager').get()
 security = require './tools/security'
+gw2api = require './tools/gw2api'
 
 sqlite = require 'sqlite3'
 db = new sqlite.Database settings.database
 db.exec "PRAGMA foreign_keys = ON;"
+
+# Just initialize, don't care if it succeeded at this point - if it didn't, the key will be attempted later when it is
+# truly needed. (unless the key was rejected, of course)
+gw2api.init ->
 
 app = express()
 server = http.createServer app

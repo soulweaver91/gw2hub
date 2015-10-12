@@ -2,6 +2,11 @@
     <div id="account_name" class="panel-heading"><h2>{{account.name}}.{{account.idnum}}</h2></div>
     <div class="panel-body">
         <div class="section" id="account_ap">
+            <div class="row">
+                <div class="col-xs-12">
+                    Account created on {{account.createdOn | momentTime}}
+                </div>
+            </div>
             <h2>Achievement points</h2>
             <div class="row">
                 <div class="col-xs-4" id="account_ap_total">

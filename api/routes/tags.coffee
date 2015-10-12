@@ -2,7 +2,9 @@ options = require '../tools/optionsroute'
 middleware = require '../tools/middleware'
 privilegeLevels = require '../tools/privilegelevels'
 parseTagTree = require '../tools/tagtree'
+commonResponses = require '../tools/commonresponses'
 
+httpStatus = require 'http-status-codes'
 _ = require 'lodash'
 
 module.exports = (app, db) ->
@@ -17,103 +19,86 @@ module.exports = (app, db) ->
             ) AS selfCount
             FROM tTag
         ''', (err, rows) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'Database error' }
-            else
-                res.status 200
-                .json parseTagTree rows
+            return commonResponses.databaseError res if err?
+
+            res.status httpStatus.OK
+            .json parseTagTree rows
 
     app.post '/tags'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
     , (req, res, next) ->
         if !req.body.name?
-            res.status 400
-            .json { status: 400, error: 'name field missing' }
+            res.status httpStatus.BAD_REQUEST
+            .json { status: httpStatus.BAD_REQUEST, error: 'name field missing' }
             return
 
         db.run 'INSERT INTO tTag (name, parent, icon, priority) VALUES (?, ?, ?, ?)',
             req.body.name, req.body.parent, req.body.icon, req.body.priority, (err) ->
                 if err?
                     if err.code == 'SQLITE_CONSTRAINT'
-                        res.status 400
-                        .json { status: 400, error: 'invalid parent tag' }
+                        res.status httpStatus.BAD_REQUEST
+                        .json { status: httpStatus.BAD_REQUEST, error: 'invalid parent tag' }
                     else
-                        res.status 500
-                        .json { status: 500, error: 'database error' }
+                        return commonResponses.databaseError res
                 else
                     db.get 'SELECT * FROM tTag WHERE id = ?', @lastID, (err, row) ->
-                        if err?
-                            res.status 500
-                            .json { status: 500, error: 'database error' }
-                        else
-                            res.status 200
-                            .json row
+                        return commonResponses.databaseError res if err?
+
+                        res.status httpStatus.OK
+                        .json row
 
     app.get '/tags/:id', (req, res, next) ->
         db.get 'SELECT * FROM tTag WHERE id = ?', req.params.id, (err, row) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'database error' }
+            return commonResponses.databaseError res if err?
+
+            if row?
+                res.status httpStatus.OK
+                .json row
             else
-                if row?
-                    res.status 200
-                    .json row
-                else
-                    res.status 404
-                    .json { status: 404, error: 'no such id' }
+                return commonResponses.badID res
 
     app.delete '/tags/:id'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
     , (req, res, next) ->
         db.get 'SELECT * FROM tTag WHERE id = ?', req.params.id, (err, row) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'database error' }
+            return commonResponses.databaseError res if err?
+
+            if row?
+                db.run 'DELETE FROM tTag WHERE id = ?', req.params.id, (err) ->
+                    return commonResponses.databaseError res if err?
+
+                    res.status httpStatus.OK
+                    .json row
             else
-                if row?
-                    db.run 'DELETE FROM tTag WHERE id = ?', req.params.id, (err) ->
-                        if err?
-                            res.status 500
-                            .json { status: 500, error: 'database error' }
-                        else
-                            res.status 200
-                            .json row
-                else
-                    res.status 404
-                    .json { status: 404, error: 'no such id' }
+                return commonResponses.badID res
 
     app.patch '/tags/:id'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.editor)
     , (req, res, next) ->
         db.get 'SELECT * FROM tTag WHERE id = ?', req.params.id, (err, row) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'database error' }
-            else
-                if row?
-                    row = _.merge row, _.pick req.body, ['name', 'parent', 'icon', 'priority']
+            return commonResponses.databaseError res if err?
 
-                    db.run 'UPDATE tTag SET name = ?, parent = ?, icon = ?, priority = ? WHERE id = ?',
-                        row.name, row.parent, row.icon, row.priority, req.params.id, (err) ->
-                            if err?
-                                if err.code == 'SQLITE_CONSTRAINT'
-                                    res.status 400
-                                    .json { status: 400, error: 'invalid parent tag' }
-                                else
-                                    res.status 500
-                                    .json { status: 500, error: 'database error' }
+            if row?
+                row = _.merge row, _.pick req.body, ['name', 'parent', 'icon', 'priority']
+
+                db.run 'UPDATE tTag SET name = ?, parent = ?, icon = ?, priority = ? WHERE id = ?',
+                    row.name, row.parent, row.icon, row.priority, req.params.id, (err) ->
+                        if err?
+                            if err.code == 'SQLITE_CONSTRAINT'
+                                res.status httpStatus.BAD_REQUEST
+                                .json { status: httpStatus.BAD_REQUEST, error: 'invalid parent tag' }
                             else
-                                res.status 200
-                                .json row
-                else
-                    res.status 404
-                    .json { status: 404, error: 'no such id' }
+                                return commonResponses.databaseError res
+                        else
+                            res.status httpStatus.OK
+                            .json row
+            else
+                return commonResponses.badID res
 
     app.post '/tags/suggest', (req, res, next) ->
         if !req.body.q?
-            res.status 400
-            .json { status: 400, error: 'query is required' }
+            res.status httpStatus.BAD_REQUEST
+            .json { status: httpStatus.BAD_REQUEST, error: 'query is required' }
         else
 
             db.all '''
@@ -123,9 +108,7 @@ module.exports = (app, db) ->
                 ORDER BY name ASC
                 LIMIT 10
             ''', req.body.q + '%', (err, rows) ->
-                if err?
-                    res.status 500
-                    .json { status: 500, error: 'database error' }
-                else
-                    res.status 200
-                    .json rows
+                return commonResponses.databaseError res if err?
+
+                res.status httpStatus.OK
+                .json rows

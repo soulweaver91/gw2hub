@@ -17,9 +17,47 @@
 @copper-color: #80211d;
 @karma-color: #6e0ea0;
 
+@human-color: #765d3c;
+@norn-color: #6d849c;
+@charr-color: #9c3f0b;
+@sylvari-color: #295024;
+@asura-color: #12608f;
+
+@warrior-color: #df7740;
+@guardian-color: #1b5563;
+@revenant-color: #782827;
+@thief-color: #575350;
+@ranger-color: #748322;
+@engineer-color: #be9043;
+@mesmer-color: #922773;
+@elementalist-color: #dc2237;
+@necromancer-color: #2c6b4c;
+
+@male-color: #24b492;
+@female-color: #91b71a;
+
 .hubicon {
   &:hover, *:hover &, &:active, *:active & {
     text-decoration: none;
+  }
+
+  &.colored {
+    &.hubicon-human { color: @human-color; }
+    &.hubicon-norn { color: @norn-color; }
+    &.hubicon-charr { color: @charr-color; }
+    &.hubicon-sylvari { color: @sylvari-color; }
+    &.hubicon-asura { color: @asura-color; }
+    &.hubicon-warrior { color: @warrior-color; }
+    &.hubicon-guardian { color: @guardian-color; }
+    &.hubicon-revenant { color: @revenant-color; }
+    &.hubicon-thief { color: @thief-color; }
+    &.hubicon-ranger { color: @ranger-color; }
+    &.hubicon-engineer { color: @engineer-color; }
+    &.hubicon-mesmer { color: @mesmer-color; }
+    &.hubicon-elementalist { color: @elementalist-color; }
+    &.hubicon-necromancer { color: @necromancer-color; }
+    &.hubicon-male { color: @male-color; }
+    &.hubicon-female { color: @female-color; }
   }
 }
 
@@ -573,5 +611,109 @@ footer {
   }
   &:after {
     content: ')';
+  }
+}
+
+.character-list-filters {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  margin-bottom: .5em;
+
+  > div {
+    flex-shrink: 0;
+    flex-grow: 1;
+    padding: .5em;
+  }
+
+  .filters-search {
+    flex-grow: 2;
+  }
+
+ .character-list-filter-icon {
+   cursor: pointer;
+   font-size: 200%;
+   position: relative;
+   margin: 8px 0 -8px 0;
+
+   &.muted {
+     color: #ccc;
+   }
+ }
+}
+
+.character-list-entry {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+
+  > div {
+    flex-basis: 100%;
+
+    a.character-name {
+      font-size: 140%;
+      font-weight: 700;
+      display: block;
+    }
+  }
+
+  ul.character-details {
+    display: inline;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: inline-block;
+
+      &:after { content: '·'; }
+      &:last-child:after { content: ''; }
+    }
+  }
+
+  .level {
+    font-size: 300%;
+    flex-shrink: 0;
+    flex-basis: 3em;
+    padding: 0 .5em;
+    text-align: right;
+
+    .level-label {
+      font-size: 50%;
+    }
+  }
+
+  .hubicon-huge {
+    font-size: 500%;
+    position: relative;
+    top: 10px;
+    flex-basis: 80px;
+    flex-grow: 0;
+    flex-shrink: 0;
+    text-align: center;
+    cursor: default;
+  }
+
+  .hubicon-attach-to-next {
+    flex-basis: 0;
+    flex-shrink: 0;
+    flex-grow: 0;
+    font-size: 200%;
+    position: relative;
+    top: 24px;
+    text-shadow: 3px  0px 0px white,
+                -3px  0px 0px white,
+                 0px  3px 0px white,
+                 0px -3px 0px white,
+                 2px  2px 0px white,
+                -2px  2px 0px white,
+                -2px -2px 0px white,
+                 2px -2px 0px white;
+    z-index: 100;
+    cursor: default;
   }
 }

@@ -52,4 +52,10 @@ module.exports = {
         # The number of concurrent threads the file scanner is allowed to create for thumbnail generation. Too high a
         # number with a lot of files will bring your computer to its knees, so be careful.
         scannerConcurrency: 20
+        # The API key to use when communicating with the official Guild Wars 2 API. You can generate a key here:
+        #    https://account.arena.net/applications
+        # This site will not necessarily use all of the key-based APIs. Regardless, it is best to use a key
+        # with as many privileges as you are willing to permit. If API points that the key does not allow access to
+        # are required, expect the site to fail.
+        officialAPIKey: ''
 }

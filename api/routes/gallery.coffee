@@ -1,17 +1,17 @@
 options = require '../tools/optionsroute'
+commonResponses = require '../tools/commonresponses'
 
+httpStatus = require 'http-status-codes'
 moment = require 'moment'
 _ = require 'lodash'
 
 getTimespanImages = (db, res, start, end) ->
     db.all 'SELECT * FROM tFile WHERE timestamp >= ? AND timestamp < ? ORDER BY timestamp ASC',
         start.valueOf(), end.valueOf(), (err, rows) ->
-            if err?
-                res.status 500
-                .json { status: 500, error: 'Database error' }
-            else
-                res.status 200
-                .json rows
+            return commonResponses.databaseError res if err?
+
+            res.status httpStatus.OK
+            .json rows
 
 statsCache =
     updated: 0,
@@ -52,10 +52,10 @@ module.exports = (app, db) ->
                     updated: moment().valueOf()
                     cache: stats
 
-                res.status 200
+                res.status httpStatus.OK
                 .json statsCache.cache
         else
-            res.status 200
+            res.status httpStatus.OK
             .json statsCache.cache
 
 

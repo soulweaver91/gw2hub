@@ -60,6 +60,16 @@ module.exports = (grunt) ->
                 key STRING NOT NULL,
                 value STRING NOT NULL
             );
+
+            CREATE TABLE tCharacterCache (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT UNIQUE,
+                race STRING NOT NULL,
+                profession STRING NOT NULL,
+                gender STRING NOT NULL,
+                created STRING NOT NULL,
+                deleted INTEGER NOT NULL
+            );
         '''
 
         tablesCreated.then ->

@@ -1,6 +1,8 @@
 _ = require 'lodash'
 fs = require 'fs'
 path = require 'path'
+git = require 'git-rev-sync'
+pjson = require './package.json'
 
 settings = {}
 
@@ -30,8 +32,8 @@ vendorScripts = [
     'bower_components/angular-ui-select/dist/select.js'
     'bower_components/angular-bootstrap/ui-bootstrap-tpls.js'
     'bower_components/angular-sanitize/angular-sanitize.js'
-    'bower_components/restangular/src/restangular.js'
-    'bower_components/lodash/dist/lodash.js'
+    'bower_components/restangular/dist/restangular.js'
+    'bower_components/lodash/lodash.js'
     'bower_components/moment/moment.js'
     'bower_components/moment/min/moment-with-locales.js'
     'bower_components/moment/locale/*.js'
@@ -54,9 +56,27 @@ module.exports = {
         effectiveSettings = _.merge settings.common, settings[profile]
         effectiveSettings.profile = profile
         effectiveSettings.vendorScripts = vendorScripts
+        effectiveSettings.appVersion = pjson.version
+        try
+            gitRev = git.short()
+            gitBranch = git.branch()
+            _.extend effectiveSettings, {
+                gitRev: gitRev
+                gitBranch: gitBranch
+                fullAppVersion: "GW2 Hub #{pjson.version}-#{gitBranch}\##{gitRev}"
+            }
+        catch e
+            # git not in PATH or project not currently using git
+            _.extend effectiveSettings, {
+                gitRev: null
+                gitBranch: null
+                fullAppVersion: "GW2 Hub " + pjson.version
+            }
 
         if effectiveSettings.APISecret == ''
             grunt.fail.fatal messages.badAPISecret
+
+        console.log "#{effectiveSettings.fullAppVersion} initialized with profile #{profile}."
 
     get: ->
         return effectiveSettings

@@ -1,12 +1,30 @@
 angular.module 'module.main', [
     'restangular'
 ]
+.config [
+    '$stateProvider'
+    ($stateProvider) ->
+        $stateProvider
+        .state 'main',
+            url: '/'
+            templateUrl: 'modules/main/main.tpl.html'
+            controller: 'hubMainController'
+            resolve:
+                account: (Restangular) ->
+                    Restangular.one 'account', 'data'
+                    .get()
+]
 .controller 'hubMainController', [
-    '$scope', 'Restangular'
-    ($scope, Restangular) ->
+    '$scope', 'Restangular', 'account'
+    ($scope, Restangular, account) ->
+        console.log account
+
+        accountPieces = account.name.split '.', 2
+
         $scope.account = {
-            name: 'Soulweaver'
-            idnum: 2190
+            name: accountPieces[0]
+            idnum: accountPieces[1]
+            createdOn: moment account.created
             ap:
                 permanent: 4207
                 historical: 0
