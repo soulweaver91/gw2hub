@@ -3,6 +3,7 @@ httpStatus = require 'http-status-codes'
 limiter = require 'simple-rate-limiter'
 moment = require 'moment'
 _ = require 'lodash'
+async = require 'async'
 
 # Get the API request object and wrap it in a limiter. 10 requests per second should be enough considering that a lot of
 # data should be cached anyway.
@@ -179,6 +180,15 @@ requestWithoutCache = (path, perms, cb) ->
 
             (cb)(err, body)
 
+standardizeParallelResult = (cb) ->
+    # A wrapper to be used with async.parallel; adds generic root level fields which would otherwise only be present
+    # on the subobjects individually.
+    (err, result) ->
+        if !err?
+            result.cachedResponse = _.all result, 'cachedResponse'
+
+        (cb)(err, result)
+
 module.exports =
     init: (cb) ->
         initialize cb
@@ -193,6 +203,12 @@ module.exports =
         # Assuming the cache database isn't tampered with, these should always be available.
         name = encodeURIComponent name
         requestWithCache "characters/#{name}", ['account', 'characters'], cb
+    getBank: (cb) ->
+        async.parallel
+            bank: (asyncCb) -> requestWithCache 'account/bank', ['account', 'inventories'], asyncCb
+            materials: (asyncCb) -> requestWithCache 'account/materials', ['account', 'inventories'], asyncCb
+        , standardizeParallelResult cb
+
     ErrorCode: ErrorCode
     fatalAPIErrorDefaultResponse: (err, res) ->
         if err.apiError?
