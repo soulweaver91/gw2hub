@@ -4,6 +4,8 @@ limiter = require 'simple-rate-limiter'
 moment = require 'moment'
 _ = require 'lodash'
 async = require 'async'
+# Not in 2.x, which is required by dependencies for now
+_chunk = require 'lodash.chunk'
 
 # Get the API request object and wrap it in a limiter. 10 requests per second should be enough considering that a lot of
 # data should be cached anyway.
@@ -24,6 +26,7 @@ ErrorCode =
     API_BAD_RESPONSE: 4
     API_ENDPOINT_NOT_FOUND: 5
     API_TIMEOUT: 6
+    INVALID_WRAPPER_CALL: 7
 
 KeyStatus =
     UNVERIFIED: 0
@@ -34,6 +37,7 @@ KeyStatus =
 state =
     keyStatus: KeyStatus.UNVERIFIED
     permissions: []
+    lastSeenBuild: 0
 
 cache = {
     responses: {}
@@ -152,6 +156,7 @@ requestWithCache = (path, perms, cb) ->
 
         # Callback arguments: error, response, requested item
         if cache.isStale path
+            console.log "Requesting /#{path} from the GW2 API."
             request path, interpreted (err, body) ->
                 if _.isArray body
                     body = { data: body }
@@ -159,10 +164,12 @@ requestWithCache = (path, perms, cb) ->
                 if !err?
                     cache.store path, body
 
-                body.cachedResponse = false
+                if body?
+                    body.cachedResponse = false
 
                 (cb)(err, body)
         else
+            console.log "Retrieving /#{path} from the cache."
             body = cache.get path
             body.cachedResponse = true
 
@@ -172,6 +179,7 @@ requestWithoutCache = (path, perms, cb) ->
     precheckStatus perms, (err) ->
         return cb err if err?
 
+        console.log "Requesting /#{path} from the GW2 API."
         request path, interpreted (err, body) ->
             if _.isArray body
                 body = { data: body }
@@ -208,6 +216,35 @@ module.exports =
             bank: (asyncCb) -> requestWithCache 'account/bank', ['account', 'inventories'], asyncCb
             materials: (asyncCb) -> requestWithCache 'account/materials', ['account', 'inventories'], asyncCb
         , standardizeParallelResult cb
+    getBuild: (cb) ->
+        requestWithCache 'build', [], (err, res) ->
+            if !err?
+                state.lastSeenBuild = res.id
+                (cb)(err, res)
+            else
+                if state.lastSeenBuild > 0
+                    (cb)(null, { id: state.lastSeenBuild, cachedResponse: true })
+                else
+                    (cb)(err, res)
+    getItems: (ids, cb) ->
+        if !(_.isArray(ids) && _.all ids, (id) -> _.isNumber id)
+            return (cb) makeError 'API wrapper requires the parameter to be an array of IDs', ErrorCode.INVALID_WRAPPER_CALL
+
+        # Hard limit on official API
+        idChunks = _chunk _.uniq(ids), 200
+        async.map idChunks, (chunk, asyncCb) ->
+            requestWithCache "items?ids=#{chunk.join ','}", [], asyncCb
+        , (err, partials) ->
+            if !err?
+                res = []
+                _.each partials, (partial) ->
+                    res = res.concat partial.data
+
+                res = { data: res }
+            else
+                res = null
+
+            (cb)(err, res)
 
     ErrorCode: ErrorCode
     fatalAPIErrorDefaultResponse: (err, res) ->
