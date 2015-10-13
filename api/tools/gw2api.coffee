@@ -54,7 +54,7 @@ cache = {
         !@responses[path]? || (moment().valueOf() - @responses[path].retrievedAt) > @timeout
 
     get: (path) ->
-        if @responses[path]? then @responses[path].response else null
+        if @responses[path]? then _.cloneDeep(@responses[path].response) else null
 
     purge: (all) ->
         if all
