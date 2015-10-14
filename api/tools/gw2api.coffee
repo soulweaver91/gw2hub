@@ -127,6 +127,8 @@ initialize = (cb) ->
                 err = makeError 'bad API response'
 
         return (cb)(err)
+    .on 'error', (err) ->
+        # Don't handle it here. Do it up there.
 
 precheckStatus = (perm, cb) ->
     makeChoice = (err) ->
@@ -168,6 +170,9 @@ requestWithCache = (path, perms, cb) ->
                     body.cachedResponse = false
 
                 (cb)(err, body)
+            .on 'error', (err) ->
+                # Don't handle it here. Do it up there.
+
         else
             console.log "Retrieving /#{path} from the cache."
             body = cache.get path
@@ -187,6 +192,8 @@ requestWithoutCache = (path, perms, cb) ->
             body.cachedResponse = false
 
             (cb)(err, body)
+        .on 'error', (err) ->
+            # Don't handle it here. Do it up there.
 
 standardizeParallelResult = (cb) ->
     # A wrapper to be used with async.parallel; adds generic root level fields which would otherwise only be present
