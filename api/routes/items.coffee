@@ -5,6 +5,31 @@ _ = require 'lodash'
 # Not in 2.x, which is required by dependencies for now
 _mapKeys = require 'lodash.mapkeys'
 
+parseDescriptionTags = (item) ->
+    # Pre-parse the color markup tags in descriptions. (Simple regex replace, assumes markup is valid and not nested.)
+
+    tagExpr = /<c=@([a-zA-Z]+)>(.+?)<\/c>/g
+    tagRepl = '<span class="description-$1">$2</span>'
+    brExpr = /\r?\n/g
+    brRepl = '<br>'
+
+    replacer = (str) ->
+        str.replace(tagExpr, tagRepl).replace(brExpr, brRepl)
+
+    if item.description?
+        item.description = replacer item.description
+
+    if item.detailsObject?.description?
+        item.detailsObject.description = replacer item.detailsObject.description
+
+    if item.detailsObject?.infix_upgrade?.buff?.description?
+        item.detailsObject.infix_upgrade.buff.description = replacer item.detailsObject.infix_upgrade.buff.description
+
+    if item.detailsObject?.bonuses?
+        item.detailsObject.bonuses = _.map item.detailsObject.bonuses, replacer
+
+    item
+
 sendFinalizedItemList = (res, ids, fromDB, fromAPI) ->
     # Unescape escaped data from own database.
     fromDB = _.map fromDB, (item) ->
@@ -33,6 +58,7 @@ sendFinalizedItemList = (res, ids, fromDB, fromAPI) ->
         items[idx].missing = false
         items[idx] = _.pick item, ['id', 'missing', 'name', 'description', 'icon', 'type', 'rarity', 'description',
                                    'level', 'vendorValue', 'flags', 'restrictedTo', 'chatLink', 'detailsObject']
+        items[idx] = parseDescriptionTags items[idx]
 
     idsToStub = _.difference ids, _.pluck items, 'id'
     _.each idsToStub, (id) ->
