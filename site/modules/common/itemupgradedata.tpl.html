@@ -1,0 +1,12 @@
+<div class="item-upgrade">
+    <div class="item-icon">
+        <img ng-src="{{item.icon || defaultIcon}}">
+    </div>
+    <div class="item-upgrade-data">
+        <div class="item-fact"><strong class="rarity-{{item.rarity | lowercase}}">{{item.name}}</strong></div>
+        <div class="item-fact" ng-bind-html="item.detailsObject.infix_upgrade.buff.description"></div>
+        <div class="item-fact" ng-repeat="(idx, bonus) in item.detailsObject.bonuses">
+            ({{idx + 1}}/{{item.detailsObject.bonuses.length}}) <span ng-bind-html="bonus"></span>
+        </div>
+    </div>
+</div>

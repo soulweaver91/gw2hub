@@ -1,0 +1,28 @@
+<div class="container">
+    <h1>Item hoard</h1>
+    <h2>Bank</h2>
+    <div class="bank">
+        <div class="bank-inner">
+            <item-icon ng-repeat="(idx, item) in bankContent.bank.data track by idx"
+                       item="itemDB[item.id]"
+                       qty="item.count"
+                       upgrades="item.upgrades"
+                       tooltip-on-left="(idx % 10) >= 5"
+                       item-database="itemDB"></item-icon>
+        </div>
+    </div>
+    <h2>Material storage</h2>
+    <div ng-repeat="(catID, catItems) in bankContent.materials.data">
+        <h3>{{materialCategories[catID]}}</h3>
+        <div class="bank">
+            <div class="bank-inner">
+                <item-icon ng-repeat="(idx, item) in catItems track by idx"
+                           item="itemDB[item.id]"
+                           qty="item.count"
+                           upgrades="null"
+                           tooltip-on-left="(idx % 10) >= 5"
+                           item-database="itemDB"></item-icon>
+            </div>
+        </div>
+    </div>
+</div>

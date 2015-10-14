@@ -9,6 +9,7 @@ angular.module 'gw2hub', [
     'module.media'
     'module.admin'
     'module.characters'
+    'module.storage'
     'service.auth'
 ]
 .config [

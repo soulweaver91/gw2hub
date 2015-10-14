@@ -1,0 +1,8 @@
+<div class="item-fact" ng-if="!upgrade && assumeStatsSelectable">
+    Double-click to select stats.
+</div>
+<div class="item-fact" ng-repeat="attr in upgrade.attributes">
+    +{{attr.modifier}} {{attr.attribute | attributeName}}
+</div>
+<div class="item-fact" ng-if="minPower && maxPower">Strength: {{minPower | number}} &ndash; {{maxPower | number}}</div>
+<div class="item-fact" ng-if="defense && defense > 0">Defense: {{defense}}</div>

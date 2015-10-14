@@ -223,3 +223,53 @@ angular.module 'module.common', [
             format = 'lll'
 
         moment(timestamp).format format
+.filter 'momentHumanize', ->
+    (ms) ->
+        m = moment.duration ms
+
+        m.humanize()
+
+.directive 'itemIcon', ->
+    restrict: 'E'
+    scope:
+        item: '='
+        qty: '='
+        upgrades: '='
+        tooltipOnLeft: '='
+        itemDatabase: '='
+    templateUrl: 'modules/common/itemicon.tpl.html'
+    controller: [
+        '$scope'
+        ($scope) ->
+            # Transparent pixel
+            $scope.defaultIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+            $scope.displayTooltip = false
+    ]
+.directive 'itemAttrData', ->
+    restrict: 'E'
+    scope:
+        upgrade: '='
+        minPower: '='
+        maxPower: '='
+        defense: '='
+        assumeStatsSelectable: '='
+    require: '^itemIcon'
+    templateUrl: 'modules/common/itemattrdata.tpl.html'
+
+.directive 'itemUpgradeData', ->
+    restrict: 'E'
+    scope:
+        item: '='
+    require: '^itemIcon'
+    templateUrl: 'modules/common/itemupgradedata.tpl.html'
+.filter 'attributeName', ->
+    (name) ->
+        switch (name)
+            when 'CritDamage' then 'Ferocity'
+            when 'ConditionDamage' then 'Condition Damage'
+            else name
+.filter 'weaponTypeName', ->
+    (name) ->
+        switch (name)
+            when 'ShortBow' then 'Shortbow'
+            else name
