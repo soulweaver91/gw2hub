@@ -36,6 +36,10 @@ Configure the application by copying the `settings.template.coffee` file into th
 Review the values inside the new file and change them to suit your own use, based on the provided guides. Make sure
 you define a secure, difficult to guess API secret key in those settings!
 
+As for the API key: make note that the site has sections that pull detailed data from the available APIs, such as the
+bank/material storage. If you'd like to use this site but are not comfortable with giving all permissions to the key
+you're using, you may in theory provide a limited access key. Regardless, this will cause some pages to not work at all.
+
 Once you have the software running, remember to log in as the default user and change its password. The default
 credentials are `user@db` as email and `default` as password. You might want to replace the email with a less generic
 one instead, too; just create a new admin user, log in as that user, and delete the default one.

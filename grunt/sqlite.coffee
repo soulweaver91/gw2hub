@@ -70,6 +70,23 @@ module.exports = (grunt) ->
                 created STRING NOT NULL,
                 deleted INTEGER NOT NULL
             );
+
+            CREATE TABLE tItemCache (
+                id INTEGER PRIMARY KEY,
+                build INTEGER NOT NULL,
+                fromapi INTEGER NOT NULL,
+                name TEXT NOT NULL,
+                icon TEXT,
+                description TEXT,
+                type TEXT NOT NULL,
+                rarity TEXT NOT NULL,
+                level INTEGER,
+                vendorValue INTEGER,
+                flags TEXT,
+                restrictedTo TEXT,
+                chatLink TEXT,
+                detailsObject BLOB
+            );
         '''
 
         tablesCreated.then ->

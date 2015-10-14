@@ -36,6 +36,15 @@
 @male-color: #24b492;
 @female-color: #91b71a;
 
+@rarity-junk-color: #b2b2b2;
+@rarity-basic-color: #ffffff;
+@rarity-fine-color: #93dce7;
+@rarity-masterwork-color: #81e864;
+@rarity-rare-color: #e7df1e;
+@rarity-exotic-color: #dc8e0b;
+@rarity-ascended-color: #ea86a4;
+@rarity-legendary-color: #b180dd;
+
 .hubicon {
   &:hover, *:hover &, &:active, *:active & {
     text-decoration: none;
@@ -60,6 +69,15 @@
     &.hubicon-female { color: @female-color; }
   }
 }
+
+.rarity-junk       { color: @rarity-junk-color;       }
+.rarity-basic      { color: @rarity-basic-color;      }
+.rarity-fine       { color: @rarity-fine-color;       }
+.rarity-masterwork { color: @rarity-masterwork-color; }
+.rarity-rare       { color: @rarity-rare-color;       }
+.rarity-exotic     { color: @rarity-exotic-color;     }
+.rarity-ascended   { color: @rarity-ascended-color;   }
+.rarity-legendary  { color: @rarity-legendary-color;  }
 
 html {
   height: 100%;
@@ -716,4 +734,178 @@ footer {
     z-index: 100;
     cursor: default;
   }
+}
+
+.item-container {
+  width: 66px;
+  height: 66px;
+  display: inline-block;
+  float: left;
+  position: relative;
+
+  .item-tooltip {
+    width: 400px;
+    min-height: 1em;
+    outline: 1px solid @bold-accent-border;
+    position: absolute;
+    left: -.25em;
+    top: -.25em;
+    background-color: @bold-accent;
+    text-align: left;
+    color: @bold-accent-secondary;
+    pointer-events: none;
+    z-index: 20;
+
+    .item-icon {
+      position: absolute;
+      top: .25em;
+      left: .25em;
+    }
+
+    .item-header {
+      margin-left: 70px;
+      margin-right: 0;
+      min-height: 66px;
+      padding: .25em .5em;
+
+
+      .item-name {
+        font-weight: 700;
+        font-size: 120%;
+      }
+    }
+
+    .item-description {
+      padding: .25em .5em;
+    }
+
+    .item-footer {
+      padding: 1em;
+      background-color: @bold-accent-border;
+    }
+
+    &.item-tooltip-left {
+      left: auto;
+      right: -.25em;
+
+      .item-icon {
+        left: auto;
+        right: .25em;
+      }
+      .item-upgrade .item-icon {
+        right: auto;
+        left: .25em;
+      }
+
+      .item-header {
+        margin-left: 0;
+        margin-right: 70px;
+      }
+    }
+
+    .item-upgrade {
+      margin: .5em .25em;
+      padding: .5em;
+      position: relative;
+      background-color: @bold-accent-border;
+      min-height: 56px;
+
+      .item-upgrade-data {
+        margin-left: 55px;
+      }
+
+      .item-icon {
+        width: 50px;
+        height: 50px;
+
+        img {
+          width: 48px;
+          height: 48px;
+        }
+      }
+    }
+
+    .description-flavor {
+      font-style: italic;
+      color: #ddf3e9;
+    }
+
+    .description-reminder {
+      color: #ffb5b7;
+    }
+
+    .description-warning {
+      color: #ff6e4e;
+    }
+  }
+}
+
+.item-icon {
+  width: 66px;
+  height: 66px;
+  border: 1px solid black;
+  position: relative;
+
+  img {
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    .item-qty-none & {
+      opacity: 0.3;
+    }
+
+    .user-select(none);
+  }
+  > img {
+    z-index: 10;
+  }
+
+  .item-icon-qty {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 14pt;
+    line-height: 11pt;
+    padding: .125em;
+    color: white;
+    text-shadow: 2px  0px 0px black,
+                -2px  0px 0px black,
+                 0px  2px 0px black,
+                 0px -2px 0px black,
+                 1px  1px 0px black,
+                -1px  1px 0px black,
+                -1px -1px 0px black,
+                 1px -1px 0px black,
+                 0px  0px 3px black;
+    z-index: 11;
+    pointer-events: none;
+
+    .user-select(none);
+  }
+}
+
+.bank {
+  text-align: center;
+
+  .bank-inner {
+    border: 1px solid @bold-accent-border;
+    .clearfix();
+    display: inline-block;
+
+    background-color: #222;
+
+    item-icon:nth-of-type(10n+1) .item-container {
+      @media (min-width: @screen-sm-min) {
+        clear: both;
+      }
+    }
+  }
+}
+
+.chatlink {
+  font-family: "Droid Mono", monospace;
 }
