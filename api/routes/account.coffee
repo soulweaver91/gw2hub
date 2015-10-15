@@ -20,6 +20,14 @@ module.exports = (app, db) ->
         gw2api.getBank (err, bank) ->
             return gw2api.fatalAPIErrorDefaultResponse err, res if err?
 
+            if bank?.bank?.data?
+                _.each bank.bank.data, (item) ->
+                    # Infusions and other upgrades are all the same to us.
+                    if item?.infusions?
+                        item.upgrades = [] if !item.upgrades?
+                        item.upgrades = item.upgrades.concat item.infusions
+                        delete item.infusions
+
             if bank?.materials?.data?
                 # Reshape materials to the provided categories.
                 categorized = {}
