@@ -1,9 +1,11 @@
 options = require '../tools/optionsroute'
 middleware = require '../tools/middleware'
+security = require '../tools/security'
 
 httpStatus = require 'http-status-codes'
 commonResponses = require '../tools/commonresponses'
 privilegeLevels = require '../tools/privilegelevels'
+_ = require 'lodash'
 
 module.exports = (app, db) ->
     app.options '/users', options ['GET', 'POST']
@@ -18,9 +20,41 @@ module.exports = (app, db) ->
             res.status httpStatus.OK
             .json users
 
-    app.post '/users', (req, res, next) ->
-        res.status httpStatus.NOT_IMPLEMENTED
-        .json { status: httpStatus.NOT_IMPLEMENTED }
+    app.post '/users'
+    , middleware.requireMinPrivilegeLevel(privilegeLevels.admin)
+    , (req, res, next) ->
+        if !req.body.name? || !req.body.email?
+            return res.status httpStatus.BAD_REQUEST
+            .json { error: 'required fields missing' }
+
+        # Generate a random password for the user. This will be displayed to the administrator once.
+        # Support for sending a registration link to the specified e-mail directly instead might be implemented later.
+        passChars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+-_!?".split ''
+        tempPass = _.times(10, -> _.sample passChars, 1).join ''
+
+        userLevel = if req.body.ulevel? then req.body.ulevel else privilegeLevels.user
+
+        security.hash tempPass, (err, hash) ->
+            if err?
+                return res.status httpStatus.INTERNAL_SERVER_ERROR
+                .json { 'error': 'password generation failed' }
+
+            db.run 'INSERT INTO tUser (email, name, ulevel, pass) VALUES (?, ?, ?, ?)',
+                req.body.email, req.body.name, userLevel, hash, (err) ->
+                    if err?
+                        if err.code == 'SQLITE_CONSTRAINT'
+                            return res.status httpStatus.BAD_REQUEST
+                            .json { status: httpStatus.BAD_REQUEST, error: 'email already in use' }
+                        else
+                            return commonResponses.databaseError res
+
+                    db.get 'SELECT * FROM tUser WHERE id = ?', @lastID, (err, user) ->
+                        return commonResponses.databaseError res if err?
+
+                        user.tempPass = tempPass
+
+                        res.status httpStatus.OK
+                        .json _.omit user, ['pass']
 
     app.get '/users/:id', (req, res, next) ->
         res.status httpStatus.NOT_IMPLEMENTED
