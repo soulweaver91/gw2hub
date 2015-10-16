@@ -632,7 +632,7 @@ footer {
   }
 }
 
-.character-list-filters {
+.list-filters {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -651,7 +651,7 @@ footer {
     flex-grow: 2;
   }
 
- .character-list-filter-icon {
+ .list-filter-icon {
    cursor: pointer;
    font-size: 200%;
    position: relative;
@@ -908,4 +908,55 @@ footer {
 
 .chatlink {
   font-family: "Droid Mono", monospace;
+}
+
+.dyes {
+  .clearfix;
+}
+
+.dye-container {
+  display: inline-block;
+  width: 80px;
+  height: 80px;
+  float: left;
+  border: 1px solid black;
+  margin-left: -1px;
+  margin-top: -1px;
+
+  .dye-color {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .dye-marker {
+      font-size: 250%;
+      text-shadow: 2px  0px 0px black,
+                  -2px  0px 0px black,
+                   0px  2px 0px black,
+                   0px -2px 0px black,
+                   1px  1px 0px black,
+                  -1px  1px 0px black,
+                  -1px -1px 0px black,
+                   1px -1px 0px black;
+
+      &.glyphicon-ok {
+        color: #94f373;
+        padding-left: 3px;
+      }
+      &.glyphicon-remove {
+        color: #f39999;
+      }
+    }
+
+    .dye-name {
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      padding: .125em;
+      display: block;
+      text-align: center;
+      font-size: 70%;
+    }
+  }
 }

@@ -1,0 +1,35 @@
+<div class="container">
+    <h1>Dye collection</h1>
+
+    <div class="list-filters">
+        <div class="filters-search">
+            <input class="form-control" type="text" ng-model="filters.search" placeholder="Search...">
+        </div>
+        <div class="filters-sort">
+            Group by...
+            <select class="form-control" ng-model="filters.grouping" ng-options="i.idx as i.name for i in filters.groupingTypes"></select>
+        </div>
+        <div class="filters-sort">
+            Display...
+            <select class="form-control" ng-model="filters.display" ng-options="i.idx as i.name for i in filters.displayTypes"></select>
+        </div>
+    </div>
+
+
+    <div class="dyes" ng-repeat="(name, catDyes) in dyes">
+        <h2>
+            {{name}} dyes
+            <small>{{catUnlockCounts[name]}}/{{catDyes.length}} collected</small>
+        </h2>
+
+        <div class="dye-container" ng-repeat="dye in filtered = (catDyes | orderBy: 'name' | filter: { name: filters.search } | filter: filters.filterByUnlockStatus)">
+            <div class="dye-color" ng-style="{ 'background-color': 'rgb(' + dye.red + ', ' + dye.green + ', ' + dye.blue + ')'}">
+                <span class="dye-marker glyphicon" ng-class="{'glyphicon-ok': dye.unlocked, 'glyphicon-remove': !dye.unlocked}"></span>
+                <span class="dye-name">{{dye.name}}</span>
+            </div>
+        </div>
+        <div ng-if="filtered.length == 0">
+            No dyes match the given filters.
+        </div>
+    </div>
+</div>
