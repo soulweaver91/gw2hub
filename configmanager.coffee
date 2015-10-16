@@ -37,6 +37,7 @@ vendorScripts = [
     'bower_components/moment/moment.js'
     'bower_components/moment/min/moment-with-locales.js'
     'bower_components/moment/locale/*.js'
+    'bower_components/autofill-event/src/autofill-event.js'
 ]
 
 module.exports = {
