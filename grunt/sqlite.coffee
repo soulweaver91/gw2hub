@@ -23,8 +23,8 @@ module.exports = (grunt) ->
         tablesCreated = q.ninvoke db, 'exec', '''
             CREATE TABLE tUser (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                email TEXT,
-                name TEXT,
+                email TEXT UNIQUE,
+                name TEXT UNIQUE,
                 ulevel INTEGER,
                 pass TEXT
             );
