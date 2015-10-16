@@ -97,6 +97,17 @@ module.exports = (app, db) ->
                     .json _.omit user, ['pass']
 
 
-    app.delete '/users/:id', (req, res, next) ->
-        res.status httpStatus.NOT_IMPLEMENTED
-        .json { status: httpStatus.NOT_IMPLEMENTED }
+    app.delete '/users/:id'
+    , middleware.requireMinPrivilegeLevel(privilegeLevels.admin)
+    , (req, res, next) ->
+        db.get 'SELECT * FROM tUser WHERE id = ?', req.params.id, (err, user) ->
+            return commonResponses.databaseError res if err?
+
+            if !user?
+                return commonResponses.badID res
+
+            db.run 'DELETE FROM tUser WHERE id = ?', user.id, (err) ->
+                return commonResponses.databaseError res if err?
+
+                res.status httpStatus.OK
+                .json { status: httpStatus.OK, message: 'deleted' }
