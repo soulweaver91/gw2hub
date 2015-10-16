@@ -69,9 +69,33 @@ module.exports = (app, db) ->
             else
                 return commonResponses.badID res
 
-    app.patch '/users/:id', (req, res, next) ->
-        res.status httpStatus.NOT_IMPLEMENTED
-        .json { status: httpStatus.NOT_IMPLEMENTED }
+    app.patch '/users/:id'
+    , middleware.requireMinPrivilegeLevelOrSelfID(privilegeLevels.admin, 'id')
+    , (req, res, next) ->
+        if req.user.ulevel < privilegeLevels.admin && req.body.ulevel?
+            return res.status httpStatus.FORBIDDEN
+            .json { error: 'you cannot set your user level' }
+
+        db.get 'SELECT * FROM tUser WHERE id = ?', req.params.id, (err, user) ->
+            return commonResponses.databaseError res if err?
+
+            if !user?
+                return commonResponses.badID res
+
+            user = _.merge user, _.pick req.body, ['name', 'ulevel', 'email']
+
+            db.run 'UPDATE tUser SET name = ?, email = ?, ulevel = ? WHERE id = ?',
+                user.name, user.email, user.ulevel, user.id, (err) ->
+                    if err?
+                        if err.code == 'SQLITE_CONSTRAINT'
+                            return res.status httpStatus.BAD_REQUEST
+                            .json { status: httpStatus.BAD_REQUEST, error: 'email already in use' }
+                        else
+                            return commonResponses.databaseError res
+
+                    res.status httpStatus.OK
+                    .json _.omit user, ['pass']
+
 
     app.delete '/users/:id', (req, res, next) ->
         res.status httpStatus.NOT_IMPLEMENTED
