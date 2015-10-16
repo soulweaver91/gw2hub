@@ -11,6 +11,8 @@ module.exports = (app, db) ->
     app.options '/users', options ['GET', 'POST']
     app.options '/users/:id', options ['GET', 'PATCH', 'DELETE']
 
+    ROOT_USER_ID = 1
+
     app.get '/users'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.admin)
     , (req, res, next) ->
@@ -76,6 +78,10 @@ module.exports = (app, db) ->
             return res.status httpStatus.FORBIDDEN
             .json { error: 'you cannot set your user level' }
 
+        if parseInt(req.params.id) == ROOT_USER_ID && req.body.ulevel? && req.body.ulevel != privilegeLevels.admin
+            return res.status httpStatus.FORBIDDEN
+            .json { error: 'this user\'s user level cannot be changed' }
+
         db.get 'SELECT * FROM tUser WHERE id = ?', req.params.id, (err, user) ->
             return commonResponses.databaseError res if err?
 
@@ -100,6 +106,10 @@ module.exports = (app, db) ->
     app.delete '/users/:id'
     , middleware.requireMinPrivilegeLevel(privilegeLevels.admin)
     , (req, res, next) ->
+        if parseInt(req.params.id) == ROOT_USER_ID
+            return res.status httpStatus.FORBIDDEN
+            .json { error: 'this user cannot be deleted' }
+
         db.get 'SELECT * FROM tUser WHERE id = ?', req.params.id, (err, user) ->
             return commonResponses.databaseError res if err?
 
