@@ -49,6 +49,9 @@ module.exports = {
         # In 2015, a recommendable value for this would be no less than 15, but in the hypothetical scenario that you
         # are using this in the far future, as computers become better it is recommended to eventually raise this.
         saltRounds: 16
+        # The shortest accepted password length. Self-explanatory, not recommended to set any lower but you can set it
+        # higher.
+        minimumPasswordLength: 8
         # The number of concurrent threads the file scanner is allowed to create for thumbnail generation. Too high a
         # number with a lot of files will bring your computer to its knees, so be careful.
         scannerConcurrency: 20
