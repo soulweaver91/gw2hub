@@ -1,0 +1,14 @@
+<div class="container">
+    <h1><span user-name-tag user="user"></span></h1>
+
+    <div>
+        E-mail:
+        <span ng-if="user.email">{{user.email}}</span>
+        <span ng-if="!user.email"><em>Hidden</em></span>
+    </div>
+
+    <div class="alert alert-info">
+        <span class="alert-icon"></span>
+        This view will have more content later!
+    </div>
+</div>

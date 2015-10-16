@@ -116,15 +116,33 @@ a {
     float: left;
   }
 
+  .navbar-right {
+    margin-right: 0;
+  }
+
   .navbar-user-section {
     text-align: right;
-    height: 40px;
-    padding: 5px;
 
-    > span {
-      display: block;
-      height: 20px;
-      line-height: 20px;
+    > a {
+      margin: 0;
+      padding: 5px;
+      display: inline-flex;
+
+      div {
+        height: 40px;
+
+        > span.user-section-line {
+          display: block;
+          height: 20px;
+          line-height: 20px;
+        }
+
+        > .glyphicon-triangle-bottom {
+          line-height: 40px;
+          padding-left: 1em;
+          font-size: 70%;
+        }
+      }
     }
   }
 
@@ -140,6 +158,20 @@ a {
     a:hover {
       background-color: lighten(@bold-accent, 10%);
     }
+  }
+
+  .navbar-nav > .open > a {
+    &, &:hover, &:focus {
+      background-color: lighten(@bold-accent, 10%);
+    }
+  }
+
+  .dropdown-menu {
+    background-color: @bold-accent-border;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
   }
 }
 

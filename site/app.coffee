@@ -2,6 +2,7 @@ angular.module 'gw2hub', [
     'templates-site'
     'ui.router'
     'ui.select'
+    'ui.bootstrap'
     'restangular'
     'module.common'
     'module.main'
@@ -11,6 +12,7 @@ angular.module 'gw2hub', [
     'module.characters'
     'module.storage'
     'module.dyes'
+    'module.user'
     'service.auth'
 ]
 .config [
