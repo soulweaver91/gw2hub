@@ -57,8 +57,17 @@ module.exports = (app, db) ->
                         .json _.omit user, ['pass']
 
     app.get '/users/:id', (req, res, next) ->
-        res.status httpStatus.NOT_IMPLEMENTED
-        .json { status: httpStatus.NOT_IMPLEMENTED }
+        db.get 'SELECT * FROM tUser WHERE id = ?', req.params.id, (err, user) ->
+            return commonResponses.databaseError if err?
+
+            if !req.user? || (parseInt(req.params.id) != req.user.id && req.user.ulevel < privilegeLevels.admin)
+                user = _.omit user, ['email']
+
+            if user?
+                res.status httpStatus.OK
+                .json _.omit user, ['pass']
+            else
+                return commonResponses.badID res
 
     app.patch '/users/:id', (req, res, next) ->
         res.status httpStatus.NOT_IMPLEMENTED
