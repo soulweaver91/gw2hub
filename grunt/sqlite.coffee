@@ -87,6 +87,16 @@ module.exports = (grunt) ->
                 chatLink TEXT,
                 detailsObject BLOB
             );
+
+            CREATE TABLE tDyeCache (
+                id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                red INTEGER NOT NULL,
+                green INTEGER NOT NULL,
+                blue INTEGER NOT NULL,
+                unlockItem INTEGER,
+                categories TEXT
+            );
         '''
 
         tablesCreated.then ->

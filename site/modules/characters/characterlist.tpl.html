@@ -1,7 +1,7 @@
 <div class="container">
     <h1>Characters</h1>
 
-    <div class="character-list-filters">
+    <div class="list-filters">
         <div class="filters-search">
             <input class="form-control" type="text" ng-model="filters.search" placeholder="Search...">
         </div>
@@ -13,7 +13,7 @@
             Filter by race:
             <div>
                 <span ng-repeat="(name, field) in filters.races">
-                    <span class="hubicon hubicon-{{name | lowercase}} character-list-filter-icon"
+                    <span class="hubicon hubicon-{{name | lowercase}} list-filter-icon"
                           title="{{name}}"
                           ng-class="{colored: filters.races[name], muted: !filters.races[name]}"
                           ng-click="filters.races[name] = !filters.races[name]"></span>
@@ -24,7 +24,7 @@
             Filter by profession:
             <div>
                 <span ng-repeat="(name, field) in filters.professions">
-                    <span class="hubicon hubicon-{{name | lowercase}} character-list-filter-icon"
+                    <span class="hubicon hubicon-{{name | lowercase}} list-filter-icon"
                           title="{{name}}"
                           ng-class="{colored: filters.professions[name], muted: !filters.professions[name]}"
                           ng-click="filters.professions[name] = !filters.professions[name]"></span>
@@ -35,7 +35,7 @@
             Filter by gender:
             <div>
                 <span ng-repeat="(name, field) in filters.genders">
-                    <span class="hubicon hubicon-{{name | lowercase}} character-list-filter-icon"
+                    <span class="hubicon hubicon-{{name | lowercase}} list-filter-icon"
                           title="{{name}}"
                           ng-class="{colored: filters.genders[name], muted: !filters.genders[name]}"
                           ng-click="filters.genders[name] = !filters.genders[name]"></span>

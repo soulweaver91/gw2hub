@@ -10,6 +10,7 @@ angular.module 'gw2hub', [
     'module.admin'
     'module.characters'
     'module.storage'
+    'module.dyes'
     'service.auth'
 ]
 .config [

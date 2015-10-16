@@ -90,7 +90,7 @@ storeItemsToDatabase = (err, db, buildID, items, toUpdate, toAdd, cb) ->
                     , (err) ->
                         if err?
                             console.log err
-                            console.stack()
+                            console.trace()
 
             stmtAdd = db.prepare '''INSERT INTO tItemCache (id, build, fromapi, name, icon, description, type, rarity,
                       level, vendorValue, flags, restrictedTo, chatLink, detailsObject)
@@ -104,7 +104,7 @@ storeItemsToDatabase = (err, db, buildID, items, toUpdate, toAdd, cb) ->
                     , (err) ->
                         if err?
                             console.log err
-                            console.stack()
+                            console.trace()
 
             stmtUpdate.finalize()
             stmtAdd.finalize()

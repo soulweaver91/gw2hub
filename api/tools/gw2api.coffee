@@ -252,6 +252,43 @@ module.exports =
                 res = null
 
             (cb)(err, res)
+    getDyes: (ids, cb) ->
+        if !(_.isArray(ids) && _.all ids, (id) -> _.isNumber id)
+            return (cb) makeError 'API wrapper requires the parameter to be an array of IDs', ErrorCode.INVALID_WRAPPER_CALL
+
+        requestWithCache 'colors', [], (err, fullDyeList) ->
+            if err?
+                return (cb)(err)
+
+            missingDyes = _.difference fullDyeList.data, ids
+
+            queue =
+                unlocked: (asyncCb) -> requestWithCache 'account/dyes', ['account', 'unlocks'], asyncCb
+
+            if missingDyes.length > 0
+                # Hard limit on official API
+                idChunks = _chunk _.uniq(missingDyes), 200
+                _.each idChunks, (chunk, idx) ->
+                    queue['dye_partial_' + idx] = (asyncCb) ->
+                        requestWithCache "colors?ids=#{chunk.join ','}", [], asyncCb
+
+            async.parallel queue, (err, partials) ->
+                if !err?
+                    res = {
+                        unlocked: partials.unlocked.data
+                        noncached: []
+                        cachedResponse: _.all partials, 'cachedResponse'
+                    }
+
+                    _.each partials, (partial, key) ->
+                        if key.indexOf('dye_partial_') < 0
+                            return true
+
+                        res.noncached = res.noncached.concat partial.data
+                else
+                    res = null
+
+                (cb)(err, res)
 
     ErrorCode: ErrorCode
     fatalAPIErrorDefaultResponse: (err, res) ->
