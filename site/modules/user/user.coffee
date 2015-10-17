@@ -75,9 +75,27 @@ angular.module 'module.user', [
                 event.preventDefault()
 ]
 .controller 'controlPanelDetailsController', [
-    '$scope'
-    ($scope) ->
+    '$scope', 'Restangular', 'user', 'authService'
+    ($scope, Restangular, user, authService) ->
 
+        $scope.profile =
+            email: user.email
+            name: user.name
+
+        $scope.saveDetails = ->
+            $scope.message = null
+
+            Restangular.one 'users', user.id
+            .patch $scope.profile
+            .then (status) ->
+                $scope.message =
+                    type: 'success'
+                    text: 'Profile saved successfully!'
+                authService.init()
+            , (err) ->
+                $scope.message =
+                    type: 'danger'
+                    text: 'Could not edit profile! Server responded with: ' + err.data.error
 ]
 .controller 'controlPanelPasswordController', [
     '$scope', 'Restangular'

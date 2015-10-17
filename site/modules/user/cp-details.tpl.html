@@ -1,3 +1,34 @@
 <div>
-    To be implemented.
+    <h2>Edit details</h2>
+
+    <div class="alert alert-{{message.type}}" ng-if="message">
+        <span class="alert-icon"></span>
+        {{message.text}}
+    </div>
+
+    <form name="editProfileForm">
+        <div class="form-group">
+            <label for="displayName">
+                Display name
+            </label>
+            <input id="displayName" class="form-control" ng-model="profile.name" required>
+            <div class="help-block">
+                This is the name that will be shown to other users next to your content.
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="loginEmail">
+                E-mail address
+            </label>
+            <input id="loginEmail" class="form-control" ng-model="profile.email" required type="email">
+            <div class="help-block">
+                This is the e-mail address you'll log in with. It will be visible to administrators, but other users
+                cannot see it.
+            </div>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-default" ng-disabled="editProfileForm.$invalid"
+                    ng-click="saveDetails()">Save profile</button>
+        </div>
+    </form>
 </div>
