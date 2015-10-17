@@ -1,0 +1,61 @@
+<div class="container">
+    <h1>Manage users</h1>
+
+    <div class="list-filters">
+        <div class="filters-search">
+            <input class="form-control" type="text" ng-model="filters.search" placeholder="Search...">
+        </div>
+        <div class="filters-sort">
+            Sort by...
+            <select class="form-control" ng-model="filters.sort" ng-options="i.key as i.label for i in filters.sortOptions"></select>
+        </div>
+    </div>
+    <div class="list-pagination">
+        <pagination ng-model="pager.page" total-items="filteredUsers.length" items-per-page="pager.itemsPerPage"
+                    ng-show="filteredUsers.length > pager.itemsPerPage"></pagination>
+    </div>
+
+    <ul class="list-group users-list">
+        <li class="list-group-item row list-group-item-heading">
+            <div class="col-xs-3">
+                Username
+            </div>
+            <div class="col-xs-5">
+                E-mail address
+            </div>
+            <div class="col-xs-2">
+                User level
+            </div>
+            <div class="col-xs-2">
+            </div>
+        </li>
+        <li class="list-group-item row" ng-repeat="user in (filteredUsers = (users | filter: filters.search)
+         | orderBy: filters.sort | limitTo: pager.itemsPerPage : (pager.page - 1) * pager.itemsPerPage)">
+            <div class="col-xs-3">
+                <a ui-sref="profile({id: user.id})"><span user-name-tag user="user"></span></a>
+            </div>
+            <div class="col-xs-5">
+                {{user.email}}
+            </div>
+            <div class="col-xs-2">
+                <span user-level-as-text user="user"></span>
+            </div>
+            <div class="col-xs-2">
+                <div class="btn-group pull-right">
+                    <button class="btn btn-default" ui-sref="adminUserEdit({id: user.id})">Edit</button>
+                    <button class="btn btn-default" ng-click="deleteUser(user)" ng-if="user.id != 1 && user.ulevel <= me.ulevel">Delete</button>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item row" ng-if="filteredUsers.length == 0">
+            <div>
+                No users matched the selected filters.
+            </div>
+        </li>
+    </ul>
+
+    <div class="list-pagination">
+        <pagination ng-model="pager.page" total-items="filteredUsers.length" items-per-page="pager.itemsPerPage"
+                    ng-show="filteredUsers.length > pager.itemsPerPage"></pagination>
+    </div>
+</div>

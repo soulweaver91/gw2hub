@@ -700,6 +700,10 @@ footer {
  }
 }
 
+.list-pagination {
+  text-align: center;
+}
+
 .character-list-entry {
   display: flex;
   flex-direction: row;
@@ -995,5 +999,77 @@ footer {
       text-align: center;
       font-size: 70%;
     }
+  }
+}
+
+.pagination {
+  > li {
+    > span, > a {
+      border-color: @bold-accent-light;
+      color: @bold-accent;
+
+      &:hover, &:focus {
+        background-color: lighten(@bold-accent, 10%);
+        border-color: @bold-accent-light;
+        color: @bold-accent-secondary;
+      }
+    }
+  }
+  > .active {
+    > span, > a {
+      &, &:hover, &:focus {
+        background-color: @bold-accent;
+        color: @bold-accent-secondary;
+        border-color: @bold-accent-light;
+      }
+    }
+  }
+  > .disabled {
+    > span, > a {
+      &, &:hover, &:focus {
+        border-color: @bold-accent-light;
+        color: @bold-accent-light;
+      }
+    }
+  }
+}
+
+.list-group-item-heading {
+  margin-bottom: 0;
+  background-color: @bold-accent;
+  color: @bold-accent-secondary;
+  font-weight: 700;
+  border-bottom-width: 0;
+}
+
+.users-list {
+  .list-group-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+
+    div {
+      flex-shrink: 0;
+      flex-grow: 0;
+    }
+  }
+}
+
+.dialog-overlay {
+  .modal-content {
+    border-radius: 0;
+  }
+
+  .modal-header {
+    background-color: @bold-accent;
+    color: @bold-accent-secondary;
+    border-bottom-color: @bold-accent-light;
+  }
+
+  .modal-footer {
+    border-top-color: @bold-accent-light;
   }
 }

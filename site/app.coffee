@@ -16,8 +16,8 @@ angular.module 'gw2hub', [
     'service.auth'
 ]
 .config [
-    '$stateProvider', '$urlRouterProvider', 'RestangularProvider', 'uiSelectConfig'
-    ($stateProvider, $urlRouterProvider, RestangularProvider, uiSelectConfig) ->
+    '$stateProvider', '$urlRouterProvider', 'RestangularProvider', 'uiSelectConfig', 'paginationConfig'
+    ($stateProvider, $urlRouterProvider, RestangularProvider, uiSelectConfig, paginationConfig) ->
         $stateProvider
         .state 'future',
             templateUrl: 'modules/common/future.tpl.html'
@@ -29,6 +29,13 @@ angular.module 'gw2hub', [
         # Include cookies in the API requests
         RestangularProvider.setDefaultHttpFields {
             withCredentials: true
+        }
+
+        _.extend paginationConfig, {
+            firstText: '<<'
+            lastText: '>>'
+            previousText: '<'
+            nextText: '>'
         }
 
         uiSelectConfig.theme = 'bootstrap'

@@ -88,6 +88,18 @@ angular.module 'module.admin', [
                 ]
             params:
                 msg: null
+        .state 'adminUserList',
+            url: '/admin/users'
+            templateUrl: 'modules/admin/userlist.tpl.html'
+            controller: 'adminUserListController'
+            resolve:
+                user: verifyAdmin
+                users: [
+                    'Restangular'
+                    (Restangular) ->
+                        Restangular.all 'users'
+                        .getList()
+                ]
 ]
 .controller 'adminMainPageController', [
     '$scope',
@@ -246,4 +258,47 @@ angular.module 'module.admin', [
                     reload: true
             , (err) ->
                 $scope.msg = 'failureEdited'
+]
+.controller 'adminUserListController', [
+    '$scope', 'user', 'users', '$modal'
+    ($scope, user, users, $modal) ->
+        $scope.users = users
+        $scope.me = user
+
+        $scope.filters =
+            search: ''
+            sort: '+name'
+            sortOptions: [
+                { key: '+name', label: 'Name, ascending' }
+                { key: '-name', label: 'Name, descending' }
+                { key: '-ulevel', label: 'User level' }
+                { key: '+email', label: 'E-mail, ascending' }
+                { key: '-email', label: 'E-mail, descending' }
+            ]
+
+        $scope.pager =
+            page: 1
+            itemsPerPage: 10
+
+        $scope.deleteUser = (user) ->
+            console.log user
+            $modal.open
+                templateUrl: 'modules/admin/deleteuser.tpl.html'
+                windowClass: 'dialog-overlay'
+                controller: [
+                    '$scope', '$state', 'Restangular',
+                    ($scope, $state, Restangular) ->
+                        console.log user
+                        $scope.user = user
+
+                        $scope.confirm = ->
+                            Restangular.one 'users', user.id
+                            .remove()
+                            .then ->
+                                $scope.$close()
+                                $state.reload()
+                            , (err) ->
+
+
+                ]
 ]
