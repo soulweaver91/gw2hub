@@ -7,10 +7,18 @@
 
 @icon-font-path: "static/";
 @input-border-focus: @bold-accent;
+@input-border: @bold-accent-light;
+@list-group-border: @bold-accent-light;
+@list-group-active-bg: @bold-accent;
+@list-group-active-color: @bold-accent-secondary;
+@btn-default-border: @bold-accent-light;
+@panel-default-border: @bold-accent-light;
+@panel-default-heading-bg: @bold-accent;
 
 @bold-accent: #9d1011;
 @bold-accent-secondary: #ffffff;
 @bold-accent-border: darken(@bold-accent, 10%);
+@bold-accent-light: #ce7276;
 
 @gold-color: #d3a222;
 @silver-color: #8d8d8d;
@@ -155,7 +163,7 @@ a {
       }
     }
 
-    a:hover {
+    a:hover, a.active {
       background-color: lighten(@bold-accent, 10%);
     }
   }
@@ -197,10 +205,7 @@ footer {
 }
 
 .panel-default {
-  border-color: @bold-accent-border;
-
   > .panel-heading {
-    background: @bold-accent none;
     color: @bold-accent-secondary;
 
     h2 {
