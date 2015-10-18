@@ -42,9 +42,8 @@ you're using, you may in theory provide a limited access key. Regardless, this w
 
 Once you have the software running, remember to log in as the default user and change its password. The default
 credentials are `user@db` as email and `default` as password. You might want to replace the email with a less generic
-one instead, too; just create a new admin user, log in as that user, and delete the default one.
-*Note: currently, this functionality is not yet supported. User management features are not far ahead in the
-task pipeline.*
+one instead, too. You can change the email address in your own control panel or, if logged in as an administrator,
+from the user management section.
 
 Usage
 -----
@@ -75,10 +74,6 @@ If you'd like to let me know you like this project, you can always send mail to 
 are also always welcome but definitely optional - don't feel pressurized to do so if you just want to give feedback.
 I'll be happy even if you just let me know this project has been any use to you - my approach is from a hobbyist
 project perspective, but the more good it can make the better.
-
-Oh, and if you want to help in some other way, I'd particularly appreciate help in the form of partying up for a
-dungeon, as my Meteorlogicus is only missing half of the Knowledge Crystals, my usual crew is pretty much inactive
-currently and I feel I'm pretty terrible so I don't want to go with a pick-up group either.
 
 License
 -------
