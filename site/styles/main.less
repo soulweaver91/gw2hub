@@ -1073,3 +1073,10 @@ footer {
     border-top-color: @bold-accent-light;
   }
 }
+
+.btn-default {
+  &:hover, &:focus, &.focus {
+    background-color: lighten(@bold-accent, 10%);
+    color: @bold-accent-secondary;
+  }
+}

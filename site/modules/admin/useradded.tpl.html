@@ -1,0 +1,18 @@
+<div class="container">
+    <h1 ng-if="user.id != -1">User {{user.name}} added</h1>
+
+    <p>
+        The login details for this user are as follows.
+        <strong>Be sure to write the temporary password down, it will not be recoverable later!</strong>
+    </p>
+    <div class="row">
+        <dl class="dl-horizontal">
+            <dt>Login e-mail</dt>
+            <dd>{{user.email}}</dd>
+            <dt>Initial password</dt>
+            <dd>{{user.tempPass}}</dd>
+        </dl>
+    </div>
+
+    <button class="btn btn-default center-block" ui-sref="adminUserList">I'm done</button>
+</div>
