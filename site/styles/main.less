@@ -7,10 +7,18 @@
 
 @icon-font-path: "static/";
 @input-border-focus: @bold-accent;
+@input-border: @bold-accent-light;
+@list-group-border: @bold-accent-light;
+@list-group-active-bg: @bold-accent;
+@list-group-active-color: @bold-accent-secondary;
+@btn-default-border: @bold-accent-light;
+@panel-default-border: @bold-accent-light;
+@panel-default-heading-bg: @bold-accent;
 
 @bold-accent: #9d1011;
 @bold-accent-secondary: #ffffff;
 @bold-accent-border: darken(@bold-accent, 10%);
+@bold-accent-light: #ce7276;
 
 @gold-color: #d3a222;
 @silver-color: #8d8d8d;
@@ -116,15 +124,33 @@ a {
     float: left;
   }
 
+  .navbar-right {
+    margin-right: 0;
+  }
+
   .navbar-user-section {
     text-align: right;
-    height: 40px;
-    padding: 5px;
 
-    > span {
-      display: block;
-      height: 20px;
-      line-height: 20px;
+    > a {
+      margin: 0;
+      padding: 5px;
+      display: inline-flex;
+
+      div {
+        height: 40px;
+
+        > span.user-section-line {
+          display: block;
+          height: 20px;
+          line-height: 20px;
+        }
+
+        > .glyphicon-triangle-bottom {
+          line-height: 40px;
+          padding-left: 1em;
+          font-size: 70%;
+        }
+      }
     }
   }
 
@@ -137,9 +163,23 @@ a {
       }
     }
 
-    a:hover {
+    a:hover, a.active {
       background-color: lighten(@bold-accent, 10%);
     }
+  }
+
+  .navbar-nav > .open > a {
+    &, &:hover, &:focus {
+      background-color: lighten(@bold-accent, 10%);
+    }
+  }
+
+  .dropdown-menu {
+    background-color: @bold-accent-border;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    border-radius: 0;
   }
 }
 
@@ -165,10 +205,7 @@ footer {
 }
 
 .panel-default {
-  border-color: @bold-accent-border;
-
   > .panel-heading {
-    background: @bold-accent none;
     color: @bold-accent-secondary;
 
     h2 {
@@ -663,6 +700,10 @@ footer {
  }
 }
 
+.list-pagination {
+  text-align: center;
+}
+
 .character-list-entry {
   display: flex;
   flex-direction: row;
@@ -958,5 +999,84 @@ footer {
       text-align: center;
       font-size: 70%;
     }
+  }
+}
+
+.pagination {
+  > li {
+    > span, > a {
+      border-color: @bold-accent-light;
+      color: @bold-accent;
+
+      &:hover, &:focus {
+        background-color: lighten(@bold-accent, 10%);
+        border-color: @bold-accent-light;
+        color: @bold-accent-secondary;
+      }
+    }
+  }
+  > .active {
+    > span, > a {
+      &, &:hover, &:focus {
+        background-color: @bold-accent;
+        color: @bold-accent-secondary;
+        border-color: @bold-accent-light;
+      }
+    }
+  }
+  > .disabled {
+    > span, > a {
+      &, &:hover, &:focus {
+        border-color: @bold-accent-light;
+        color: @bold-accent-light;
+      }
+    }
+  }
+}
+
+.list-group-item-heading {
+  margin-bottom: 0;
+  background-color: @bold-accent;
+  color: @bold-accent-secondary;
+  font-weight: 700;
+  border-bottom-width: 0;
+}
+
+.users-list {
+  .list-group-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 0;
+    margin-right: 0;
+
+    div {
+      flex-shrink: 0;
+      flex-grow: 0;
+    }
+  }
+}
+
+.dialog-overlay {
+  .modal-content {
+    border-radius: 0;
+  }
+
+  .modal-header {
+    background-color: @bold-accent;
+    color: @bold-accent-secondary;
+    border-bottom-color: @bold-accent-light;
+  }
+
+  .modal-footer {
+    border-top-color: @bold-accent-light;
+  }
+}
+
+.btn-default {
+  &:hover, &:focus, &.focus {
+    background-color: lighten(@bold-accent, 10%);
+    color: @bold-accent-secondary;
   }
 }

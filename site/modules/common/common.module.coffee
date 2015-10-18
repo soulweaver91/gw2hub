@@ -273,3 +273,26 @@ angular.module 'module.common', [
         switch (name)
             when 'ShortBow' then 'Shortbow'
             else name
+.directive 'userLevelAsText', ->
+    restrict: 'A'
+    replace: true
+    template: '<span>{{level}}</span>'
+    scope:
+        user: '='
+    controller: [
+        '$scope', 'authService',
+        ($scope, authService) ->
+            ulevels = authService.userLevels()
+            lvName = _.findKey ulevels, (lv) -> lv == $scope.user.ulevel
+
+
+            $scope.level = switch lvName
+                when 'admin' then 'Administrator'
+                when 'editor' then 'Editor'
+                when 'privileged' then 'VIP'
+                when 'trusted' then 'Trusted'
+                when 'user' then 'User'
+                when 'disabled' then 'Limited'
+                else 'Unknown user level'
+
+    ]

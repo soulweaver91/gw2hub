@@ -1,13 +1,13 @@
 <div class="navbar navbar-default navbar-fixed-top" ng-controller="navbarController">
     <ul class="nav navbar-nav">
         <li><a href="#" ui-sref="main" class="navbar-brand">GW2 Hub</a></li>
-        <li><a href="#" ui-sref="gallery">Gallery</a></li>
-        <li><a href="#" ui-sref="characterList">Characters</a></li>
-        <li><a href="#" ui-sref="achievements.main">AP</a></li>
-        <li><a href="#" ui-sref="dyes">Dyes</a></li>
-        <li><a href="#" ui-sref="storage">Hoard</a></li>
-        <li><a href="#" ui-sref="legendary">Meteorlogicus</a></li>
-        <li><a href="#" ui-sref="adminMain" ng-if="user != null && user.ulevel >= 50">Admin</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="gallery">Gallery</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="characterList">Characters</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="achievements.main">AP</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="dyes">Dyes</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="storage">Hoard</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="legendary">Meteorlogicus</a></li>
+        <li><a href="#" ui-sref-active="active" ui-sref="adminMain" ng-if="user != null && user.ulevel >= 50">Admin</a></li>
     </ul>
 
     <div class="navbar-right">
@@ -24,12 +24,21 @@
             </li>
         </ul>
         <ul class="nav navbar-nav" ng-if="user != null">
-            <li class="navbar-user-section">
-                <span user-name-tag user="user"></span>
-                <span>{{user.email}}</span>
-            </li>
-            <li>
-                <a href="#" ng-click="logout()">Log out</a>
+            <li class="navbar-user-section" dropdown>
+                <a href="#" dropdown-toggle>
+                    <div>
+                        <span class="user-section-line" user-name-tag user="user"></span>
+                        <span class="user-section-line">{{user.email}}</span>
+                    </div>
+                    <div>
+                        <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    </div>
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" ui-sref="profile({id: user.id})">Profile</a></li>
+                    <li><a href="#" ui-sref="controlPanel">Settings</a></li>
+                    <li><a href="#" ng-click="logout()">Log out</a></li>
+                </ul>
             </li>
         </ul>
     </div>

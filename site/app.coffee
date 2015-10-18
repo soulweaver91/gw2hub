@@ -2,6 +2,7 @@ angular.module 'gw2hub', [
     'templates-site'
     'ui.router'
     'ui.select'
+    'ui.bootstrap'
     'restangular'
     'module.common'
     'module.main'
@@ -11,11 +12,12 @@ angular.module 'gw2hub', [
     'module.characters'
     'module.storage'
     'module.dyes'
+    'module.user'
     'service.auth'
 ]
 .config [
-    '$stateProvider', '$urlRouterProvider', 'RestangularProvider', 'uiSelectConfig'
-    ($stateProvider, $urlRouterProvider, RestangularProvider, uiSelectConfig) ->
+    '$stateProvider', '$urlRouterProvider', 'RestangularProvider', 'uiSelectConfig', 'paginationConfig'
+    ($stateProvider, $urlRouterProvider, RestangularProvider, uiSelectConfig, paginationConfig) ->
         $stateProvider
         .state 'future',
             templateUrl: 'modules/common/future.tpl.html'
@@ -27,6 +29,13 @@ angular.module 'gw2hub', [
         # Include cookies in the API requests
         RestangularProvider.setDefaultHttpFields {
             withCredentials: true
+        }
+
+        _.extend paginationConfig, {
+            firstText: '<<'
+            lastText: '>>'
+            previousText: '<'
+            nextText: '>'
         }
 
         uiSelectConfig.theme = 'bootstrap'

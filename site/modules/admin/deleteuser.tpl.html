@@ -1,0 +1,11 @@
+<div class="modal-header">
+    Delete user {{user.name}}?
+</div>
+<div class="modal-body">
+    This will fully delete {{user.name}}'s account and all associated data from the database.
+    <strong>The deletion cannot be undone!</strong>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="confirm()">Delete user</button>
+    <button class="btn btn-default" ng-click="$close()">Cancel</button>
+</div>

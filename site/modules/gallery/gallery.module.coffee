@@ -52,6 +52,10 @@ angular.module 'module.gallery', [
         if $state.current.name is 'gallery'
             $state.go 'gallery.year', { year: moment().year() }
 
+        $scope.$on '$stateChangeStart', (event, toState, toParams) ->
+            if toState.name == 'gallery'
+                event.preventDefault()
+
         $scope.navtreeSettings =
             isActive: (branchState, uiState) ->
                 branchState? &&

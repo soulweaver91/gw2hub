@@ -10,7 +10,7 @@ module.exports = (grunt) ->
 
         fs.writeFile 'intermediate/env.js', "hubEnv = #{
             JSON.stringify _.pick settings,
-                ['APIPort', 'APIAddress', 'profile', 'remoteMediaLocation']
+                ['APIPort', 'APIAddress', 'profile', 'remoteMediaLocation', 'minimumPasswordLength']
             };"
         , (err) ->
             success !err?

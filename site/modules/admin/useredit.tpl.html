@@ -1,0 +1,36 @@
+<div class="container">
+    <h1 ng-if="user.id != -1">Editing user {{userOriginalName}}</h1>
+    <h1 ng-if="user.id == -1">Adding user</h1>
+
+    <div ng-switch="msg">
+        <div ng-switch-when="failureEdited" class="alert alert-danger">
+            <span class="alert-icon"></span>
+            User could not be edited!
+        </div>
+    </div>
+
+    <form class="form-horizontal">
+        <div class="form-group">
+            <label for="user_editor_name" class="col-xs-12 col-sm-3 control-label">Name</label>
+            <div class="col-xs-12 col-sm-9">
+                <input id="user_editor_name" class="form-control" ng-model="user.name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="user_editor_email" class="col-xs-12 col-sm-3 control-label">E-mail</label>
+            <div class="col-xs-12 col-sm-9">
+                <input id="user_editor_email" class="form-control" ng-model="user.email">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="user_editor_ulevel" class="col-xs-12 col-sm-3 control-label">User level</label>
+            <div class="col-xs-12 col-sm-9">
+                <select id="user_editor_ulevel" class="form-control" ng-model="user.ulevel"
+                        ng-options="level.value as level.name for level in ulevels"></select>
+            </div>
+        </div>
+        <div class="form-group text-center">
+            <button ng-click="submitUser()" class="btn btn-default">Save</button>
+        </div>
+    </form>
+</div>
