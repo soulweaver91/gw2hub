@@ -1,12 +1,18 @@
 <div class="item-upgrade">
     <div class="item-icon">
-        <img ng-src="{{item.icon || defaultIcon}}">
+        <img ng-if="!item.missing" ng-src="{{item.icon || defaultIcon}}">
+        <img ng-if="item.missing" src="static/unknown-item.png">
     </div>
     <div class="item-upgrade-data">
-        <div class="item-fact"><strong class="rarity-{{item.rarity | lowercase}}">{{item.name}}</strong></div>
+        <div class="item-fact" ng-if="!item.missing"><strong class="rarity-{{item.rarity | lowercase}}">{{item.name}}</strong></div>
+        <div class="item-fact" ng-if="item.missing"><strong class="rarity-basic">Item #{{item.id | number}}</strong></div>
         <div class="item-fact" ng-bind-html="item.detailsObject.infix_upgrade.buff.description"></div>
         <div class="item-fact" ng-repeat="(idx, bonus) in item.detailsObject.bonuses">
             ({{idx + 1}}/{{item.detailsObject.bonuses.length}}) <span ng-bind-html="bonus"></span>
+        </div>
+        <div class="item-fact" ng-if="item.missing">
+            The details for this item are currently unknown. This item was most likely added to the game recently
+            and thus is not yet available via the Guild Wars 2 API.
         </div>
     </div>
 </div>

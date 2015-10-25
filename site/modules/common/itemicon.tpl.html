@@ -2,11 +2,12 @@
     <div class="item-icon"
          ng-mouseenter="displayTooltip = (item !== null && item !== undefined)"
          ng-mouseleave="displayTooltip = false">
-        <img ng-src="{{item.icon || defaultIcon}}">
+        <img ng-src="{{item.icon || defaultIcon}}" ng-if="!item.missing">
+        <img src="static/unknown-item.png" ng-if="item.missing">
         <span class="item-icon-qty" ng-if="qty > 1">{{qty}}</span>
         <span class="item-icon-qty" ng-if="item.type == 'Tool' && item.detailsObject.charges">{{item.detailsObject.charges}}</span>
     </div>
-    <div class="item-tooltip" ng-class="{'item-tooltip-left': tooltipOnLeft}" ng-if="displayTooltip">
+    <div class="item-tooltip" ng-class="{'item-tooltip-left': tooltipOnLeft}" ng-if="displayTooltip && !item.missing">
         <div class="item-icon">
             <img ng-src="{{item.icon || defaultIcon}}">
             <span class="item-icon-qty" ng-if="qty > 1">{{qty}}</span>
@@ -121,6 +122,22 @@
                 <span-coin ng-if="qty > 1" coin="item.vendorValue * qty" mode="'gscbrief'"></span-coin>
             </span>
             <div class="clearfix"></div>
+        </div>
+    </div>
+    <div class="item-tooltip" ng-class="{'item-tooltip-left': tooltipOnLeft}" ng-if="displayTooltip && item.missing">
+        <div class="item-icon">
+            <img src="static/unknown-item.png">
+            <span class="item-icon-qty" ng-if="qty > 1">{{qty}}</span>
+            <span class="item-icon-qty" ng-if="item.type == 'Tool' && item.detailsObject.charges">{{item.detailsObject.charges}}</span>
+        </div>
+        <div class="item-header">
+            <div class="item-fact item-name rarity-basic">Item #{{item.id | number}}</div>
+        </div>
+        <div class="item-description">
+            <div class="item-fact">
+                The details for this item are currently unknown. This item was most likely added to the game recently
+                and thus is not yet available via the Guild Wars 2 API.
+            </div>
         </div>
     </div>
 </div>
