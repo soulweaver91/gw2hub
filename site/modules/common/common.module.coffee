@@ -267,6 +267,8 @@ angular.module 'module.common', [
         switch (name)
             when 'CritDamage' then 'Ferocity'
             when 'ConditionDamage' then 'Condition Damage'
+            when 'ConditionDuration' then 'Expertise'
+            when 'BoonDuration' then 'Concentration'
             else name
 .filter 'weaponTypeName', ->
     (name) ->
