@@ -117,7 +117,7 @@ module.exports = (app, db) ->
     app.get '/items/:idList', (req, res, next) ->
 
         gw2api.getBuild (err, build) ->
-            gw2api.fatalAPIErrorDefaultResponse err if err?
+            return gw2api.fatalAPIErrorDefaultResponse err, res if err?
 
             if !/^\d+(,\d+)*$/.test req.params.idList
                 return res.status httpStatus.BAD_REQUEST
