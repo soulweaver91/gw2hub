@@ -217,7 +217,80 @@ module.exports =
     getCharacter: (name, cb) ->
         # Assuming the cache database isn't tampered with, these should always be available.
         name = encodeURIComponent name
-        requestWithCache "characters/#{name}", ['account', 'characters'], cb
+        requestWithCache "characters/#{name}", ['account', 'characters'], (err, char) ->
+            return (cb)(err, null) if err?
+
+            specializationIDs = []
+            traitIDs = []
+
+            _.each char.specializations, (mode) ->
+                _.each mode, (spec) ->
+                    if spec?
+                        specializationIDs.push spec.id
+                        traitIDs = traitIDs.concat spec.traits
+
+            if specializationIDs.length > 0
+                requestWithCache 'specializations?ids=' + _.compact(_.uniq(specializationIDs)).join(','), [], (err, specs) ->
+                    return (cb)(err, null) if err?
+
+                    _.each specs.data, (spec) ->
+                        traitIDs = traitIDs.concat spec.minor_traits
+
+                    specs = _.indexBy specs.data, 'id'
+                    _.each char.specializations, (mode) ->
+                        _.each mode, (spec) ->
+                            if spec?
+                                spec.name = specs[spec.id].name
+                                spec.icon = specs[spec.id].icon
+                                spec.background = specs[spec.id].background
+                                spec.traits = spec.traits.concat specs[spec.id].minor_traits
+
+                    requestWithCache 'traits?ids=' + _.compact(_.uniq(traitIDs)).join(','), [], (err, traits) ->
+                        return (cb)(err, null) if err?
+
+                        traits = _.indexBy traits.data, 'id'
+
+                        _.each char.specializations, (mode) ->
+                            _.each mode, (spec) ->
+                                if spec?
+                                    traitData = []
+                                    _.each spec.traits, (trait) ->
+                                        traitData.push _.cloneDeep traits[trait] if trait?
+
+                                    spec.traits = _.sortBy traitData, (trait) ->
+                                        trait.tier * 2 + (if trait.slot == 'Minor' then 0 else 1)
+
+                            # Handle trait synergy based on the other traits chosen in that game mode.
+                            modeTraits = []
+                            _.each mode, (spec) ->
+                                if spec?
+                                    modeTraits = modeTraits.concat _.pluck spec.traits, 'id'
+
+                            _.each mode, (spec) ->
+                                if spec?
+                                    _.each spec.traits, (trait) ->
+                                        _.each trait.facts, (fact) ->
+                                            fact.traited = false
+
+                                        if trait.traited_facts?
+                                            _.each trait.traited_facts, (tfact) ->
+                                                if tfact.requires_trait in modeTraits
+                                                    tfact.traited = true
+
+                                                    if tfact.overrides?
+                                                        trait.facts[tfact.overrides] = tfact
+                                                    else
+                                                        if trait.facts?
+                                                            trait.facts.push tfact
+                                                        else
+                                                            trait.facts = [tfact]
+
+                        (cb)(err, char)
+
+            else
+                (cb)(err, char)
+
+
     getBank: (cb) ->
         async.parallel
             bank: (asyncCb) -> requestWithCache 'account/bank', ['account', 'inventories'], asyncCb
