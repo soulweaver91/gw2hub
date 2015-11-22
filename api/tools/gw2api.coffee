@@ -305,7 +305,7 @@ module.exports =
                 if state.lastSeenBuild > 0
                     (cb)(null, { id: state.lastSeenBuild, cachedResponse: true })
                 else
-                    (cb)(err, res)
+                    (cb)(null, { id: -1, cachedResponse: true })
     getItems: (ids, cb) ->
         if !(_.isArray(ids) && _.all ids, (id) -> _.isNumber id)
             return (cb) makeError 'API wrapper requires the parameter to be an array of IDs', ErrorCode.INVALID_WRAPPER_CALL
