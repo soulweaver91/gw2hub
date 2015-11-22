@@ -283,6 +283,34 @@ angular.module 'module.common', [
         switch (name)
             when 'ShortBow' then 'Shortbow'
             else name
+.directive 'traitIcon', ->
+    restrict: 'E'
+    scope:
+        trait: '='
+    templateUrl: 'modules/common/traiticon.tpl.html'
+    controller: [
+        '$scope'
+        ($scope) ->
+            # Transparent pixel
+            $scope.defaultIcon = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+            $scope.tiers = ['Adept', 'Master', 'Grandmaster']
+            $scope.displayTooltip = false
+            $scope.tooltipOnLeft = false
+
+            $scope.prepareTooltipDisplay = ($event) ->
+                elemX = $event.target.getBoundingClientRect().left
+                elemWidth = $event.target.clientWidth
+                width = $document[0].body.clientWidth
+
+                $scope.tooltipOnLeft = (elemX + (elemWidth / 2)) > (width / 2)
+                $scope.displayTooltip = $scope.item?
+    ]
+.directive 'traitFacts', ->
+    restrict: 'E'
+    scope:
+        facts: '='
+    templateUrl: 'modules/common/traitfacts.tpl.html'
+
 .directive 'userLevelAsText', ->
     restrict: 'A'
     replace: true

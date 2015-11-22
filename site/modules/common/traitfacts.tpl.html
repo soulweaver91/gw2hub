@@ -1,0 +1,62 @@
+<div class="item-fact" ng-repeat="fact in facts">
+    <img class="trait-fact-icon" ng-src="{{fact.icon}}" ng-if="fact.icon">
+    <span ng-if="fact.apply_count > 1" class="trait-fact-count"><span>{{fact.apply_count}}</span></span>
+    <div class="trait-fact-text" ng-switch="fact.type">
+        <div ng-switch-when="AttributeAdjust">
+            <span>+{{fact.value | number}} {{fact.target | attributeName}}</span>
+        </div>
+        <div ng-switch-when="Buff">
+                        <span>
+                            {{fact.status}}<span ng-if="fact.duration > 0">
+                                ({{fact.duration}} s)</span>: {{fact.description}}
+                        </span>
+        </div>
+        <div ng-switch-when="PrefixedBuff">
+                        <span>
+                            {{fact.status}}<span ng-if="fact.duration > 0">
+                                ({{fact.duration}} s)</span>: {{fact.description}}
+                        </span>
+        </div>
+        <div ng-switch-when="BuffConversion">
+            <span>{{fact.target | attributeName}}: +{{fact.percent}} of {{fact.source | attributeName}}</span>
+        </div>
+        <div ng-switch-when="ComboField">
+            <span>{{fact.text}}: {{fact.field_type}}</span>
+        </div>
+        <div ng-switch-when="ComboFinisher">
+                        <span>
+                            {{fact.text}}: {{fact.finisher_type}}
+                            <span ng-if="fact.percent != 100">
+                                ({{fact.percent}}% Chance)
+                            </span>
+                        </span>
+        </div>
+        <div ng-switch-when="Damage">
+            <span>{{fact.text}}: {{fact.hit_count}}</span>
+        </div>
+        <div ng-switch-when="Distance">
+            <span>{{fact.text}}: {{fact.distance | number}}</span>
+        </div>
+        <div ng-switch-when="NoData">
+            <span>{{fact.text}}</span>
+        </div>
+        <div ng-switch-when="Number">
+            <span>{{fact.text}}: {{fact.value | number}}</span>
+        </div>
+        <div ng-switch-when="Percent">
+            <span>{{fact.text}}: {{fact.percent}}%</span>
+        </div>
+        <div ng-switch-when="Radius">
+            <span>Radius: {{fact.distance | number}}</span>
+        </div>
+        <div ng-switch-when="Range">
+            <span>Range: {{fact.value | number}}</span>
+        </div>
+        <div ng-switch-when="Time">
+            <span>{{fact.text}}: {{fact.duration}} s</span>
+        </div>
+        <div ng-switch-when="Unblockable">
+            <span>{{fact.text}}</span>
+        </div>
+    </div>
+</div>
