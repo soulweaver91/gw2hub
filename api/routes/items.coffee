@@ -137,7 +137,7 @@ module.exports = (app, db) ->
                 idsToGet = _.difference ids, _.pluck items, 'id'
 
                 # Get the other half of the get ids to find out exactly which ones to add and which to update.
-                missing = _.without idsToGet, existingButStale
+                missing = _.difference idsToGet, existingButStale
 
                 if idsToGet.length > 0
                     gw2api.getItems idsToGet, (err, apiItems) ->
