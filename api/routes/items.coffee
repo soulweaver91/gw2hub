@@ -8,7 +8,7 @@ _mapKeys = require 'lodash.mapkeys'
 parseDescriptionTags = (item) ->
     # Pre-parse the color markup tags in descriptions. (Simple regex replace, assumes markup is valid and not nested.)
 
-    tagExpr = /<c=@([a-zA-Z]+)>(.+?)<\/c>/g
+    tagExpr = /<c=@([a-zA-Z]+)>(.+?)<\/?c>/g
     tagRepl = '<span class="description-$1">$2</span>'
     brExpr = /\r?\n/g
     brRepl = '<br>'
