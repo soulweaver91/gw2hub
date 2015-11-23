@@ -112,6 +112,54 @@ module.exports = (app, db) ->
                         return gw2api.fatalAPIErrorDefaultResponse err, res if err?
 
                         char.id = req.params.id
+
+                        _.each char.equipment, (item) ->
+                            # Infusions and other upgrades are all the same to us.
+                            if item?.infusions?
+                                item.upgrades = [] if !item.upgrades?
+                                item.upgrades = item.upgrades.concat item.infusions
+                                delete item.infusions
+
+                        # Transform equipment to a more sensible arrangement, by slot rather than a random array
+                        equipment = {
+                            helm:      _.findWhere char.equipment, { slot: 'Helm' }        || null
+                            shoulders: _.findWhere char.equipment, { slot: 'Shoulders' }   || null
+                            coat:      _.findWhere char.equipment, { slot: 'Coat' }        || null
+                            gloves:    _.findWhere char.equipment, { slot: 'Gloves' }      || null
+                            leggings:  _.findWhere char.equipment, { slot: 'Leggings' }    || null
+                            boots:     _.findWhere char.equipment, { slot: 'Boots' }       || null
+                            breather:  _.findWhere char.equipment, { slot: 'HelmAquatic' } || null
+                            backpack:  _.findWhere char.equipment, { slot: 'Backpack' }    || null
+                            accessories: [
+                                _.findWhere char.equipment, { slot: 'Accessory1' } || null
+                                _.findWhere char.equipment, { slot: 'Accessory2' } || null
+                            ]
+                            rings: [
+                                _.findWhere char.equipment, { slot: 'Ring1' } || null
+                                _.findWhere char.equipment, { slot: 'Ring2' } || null
+                            ]
+                            amulet:    _.findWhere char.equipment, { slot: 'Amulet' }      || null
+                            weapons:
+                                main: [
+                                    _.findWhere char.equipment, { slot: 'WeaponA1' } || null
+                                    _.findWhere char.equipment, { slot: 'WeaponA2' } || null
+                                ]
+                                secondary: [
+                                    _.findWhere char.equipment, { slot: 'WeaponB1' } || null
+                                    _.findWhere char.equipment, { slot: 'WeaponB2' } || null
+                                ]
+                                aquatic: [
+                                    _.findWhere char.equipment, { slot: 'WeaponAquaticA' } || null
+                                    _.findWhere char.equipment, { slot: 'WeaponAquaticB' } || null
+                                ]
+                            gathering:
+                                axe:    _.findWhere char.equipment, { slot: 'Axe' }    || null
+                                pick:   _.findWhere char.equipment, { slot: 'Pick' }   || null
+                                sickle: _.findWhere char.equipment, { slot: 'Sickle' } || null
+                        }
+
+                        char.equipment = equipment
+
                         res.status httpStatus.OK
                         .json char
 

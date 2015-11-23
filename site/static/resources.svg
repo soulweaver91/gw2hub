@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg'>
+    <defs>
+        <mask id="rectangleMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+            <rect x="0" y="0" width="1" height="1" fill="black"></rect>
+            <rect x="0.05" y="0.05" width="0.9" height="0.9" fill="white"></rect>
+        </mask>
+        <mask id="rectangleMaskSmall" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+            <rect x="0" y="0" width="1" height="1" fill="black"></rect>
+            <rect x="0.1" y="0.1" width="0.8" height="0.8" fill="white"></rect>
+        </mask>
+        <mask id="hexagonMask" maskUnits="objectBoundingBox" maskContentUnits="objectBoundingBox">
+            <rect x="0" y="0" width="1" height="1" fill="black"></rect>
+            <polygon points="0.11005,0.28991 0.50858,0.01982 0.90712,0.28991 0.90712,0.71008 0.50858,0.98019
+                             	0.11005,0.71008" fill="white"></polygon>
+        </mask>
+    </defs>
+</svg>

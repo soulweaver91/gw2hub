@@ -17,6 +17,12 @@
         <span>
             <span class="glyphicon glyphicon-record"></span> {{media.size | filesize}}
         </span>
+        <span ng-if="character != null">
+            Character:
+            <span class="hubicon hubicon-{{character.profession | lowercase}}"></span>
+            <span class="hubicon hubicon-{{character.race | lowercase}}"></span>
+            <a ui-sref="character({id: character.id})">{{character.name}}</a>
+        </span>
         <span ng-if="userCanEdit">
             <a ui-sref="adminMedia.edit({id: media.hash})">
                 <span class="glyphicon glyphicon-edit"></span>

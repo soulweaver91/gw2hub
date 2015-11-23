@@ -8,7 +8,7 @@ _mapKeys = require 'lodash.mapkeys'
 parseDescriptionTags = (item) ->
     # Pre-parse the color markup tags in descriptions. (Simple regex replace, assumes markup is valid and not nested.)
 
-    tagExpr = /<c=@([a-zA-Z]+)>(.+?)<\/c>/g
+    tagExpr = /<c=@([a-zA-Z]+)>(.+?)<\/?c>/g
     tagRepl = '<span class="description-$1">$2</span>'
     brExpr = /\r?\n/g
     brRepl = '<br>'
@@ -117,7 +117,7 @@ module.exports = (app, db) ->
     app.get '/items/:idList', (req, res, next) ->
 
         gw2api.getBuild (err, build) ->
-            gw2api.fatalAPIErrorDefaultResponse err if err?
+            return gw2api.fatalAPIErrorDefaultResponse err, res if err?
 
             if !/^\d+(,\d+)*$/.test req.params.idList
                 return res.status httpStatus.BAD_REQUEST
@@ -137,7 +137,7 @@ module.exports = (app, db) ->
                 idsToGet = _.difference ids, _.pluck items, 'id'
 
                 # Get the other half of the get ids to find out exactly which ones to add and which to update.
-                missing = _.without idsToGet, existingButStale
+                missing = _.difference idsToGet, existingButStale
 
                 if idsToGet.length > 0
                     gw2api.getItems idsToGet, (err, apiItems) ->

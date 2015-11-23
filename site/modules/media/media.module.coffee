@@ -19,18 +19,31 @@ angular.module 'module.media', [
                     (authService) ->
                         authService.userAsync()
                 ]
+                media: [
+                    'Restangular', '$stateParams'
+                    (Restangular, $stateParams) ->
+                        Restangular.one 'media', $stateParams.hash
+                        .get()
+                ]
+                character: [
+                    'Restangular', 'media',
+                    (Restangular, media) ->
+                        if media.character?
+                            Restangular.one 'characters', media.character
+                            .one 'brief'
+                            .get()
+                        else
+                            null
+                ]
 ]
 .controller 'mediaViewController', [
-    '$scope', '$state', '$stateParams', 'Restangular', 'user', 'authService',
-    ($scope, $state, $stateParams, Restangular, user, authService) ->
-        Restangular.one('media', $stateParams.hash).get()
-        .then (media) ->
-            $scope.media = media
-            $scope.type = if media.locator.indexOf('.jpg') > 0 then 'image' else 'movie'
-            $scope.mediaDate = moment($scope.media.timestamp).format('lll')
-            $scope.src = hubEnv.remoteMediaLocation + $scope.media.locator
+    '$scope', '$state', '$stateParams', 'user', 'media', 'character', 'authService',
+    ($scope, $state, $stateParams, user, media, character, authService) ->
+        $scope.media = media
+        $scope.character = character
+        $scope.type = if media.locator.indexOf('.jpg') > 0 then 'image' else 'movie'
+        $scope.mediaDate = moment($scope.media.timestamp).format('lll')
+        $scope.src = hubEnv.remoteMediaLocation + $scope.media.locator
 
-            $scope.userCanEdit = user.ulevel >= authService.userLevels().editor
-        , (err) ->
-            console.log err
+        $scope.userCanEdit = user.ulevel >= authService.userLevels().editor
 ]

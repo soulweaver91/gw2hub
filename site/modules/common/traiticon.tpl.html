@@ -1,0 +1,40 @@
+<div class="item-container trait-container" ng-class="{'minor-trait-container': trait.slot == 'Minor'}">
+    <div class="item-icon"
+         ng-mouseenter="displayTooltip = (trait !== null && trait !== undefined)"
+         ng-mouseleave="displayTooltip = false">
+        <img ng-src="{{trait.icon || defaultIcon}}">
+    </div>
+    <div class="item-tooltip" ng-class="{'item-tooltip-left': tooltipOnLeft}" ng-if="displayTooltip">
+        <div class="item-icon">
+            <img ng-src="{{trait.icon || defaultIcon}}">
+        </div>
+        <div class="item-header">
+            <div class="item-fact item-name">{{trait.name}}</div>
+            <div class="item-fact">{{trait.slot}} {{tiers[trait.tier - 1]}} trait</div>
+        </div>
+        <div class="item-description">
+            <div class="item-fact">{{trait.description}}</div>
+            <trait-facts facts="trait.facts"></trait-facts>
+            <div ng-repeat="skill in trait.skills" class="item-upgrade">
+                <div class="item-icon skill-icon">
+                    <img ng-src="{{skill.icon}}">
+                </div>
+                <div class="item-upgrade-data">
+                    <div class="item-fact"><strong>{{skill.name}}</strong></div>
+                    {{skill.description}}
+                </div>
+                <trait-facts facts="skill.facts"></trait-facts>
+            </div>
+        </div>
+        <div class="item-footer">
+            <div ng-repeat="fact in trait.facts">
+                <div ng-switch="fact.type">
+                    <div class="item-fact" ng-switch-when="Recharge">
+                        Cooldown: {{fact.value}} s
+                    </div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>

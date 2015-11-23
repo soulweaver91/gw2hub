@@ -1,6 +1,6 @@
 <div class="item-container" ng-class="{'item-qty-none': qty == 0}">
     <div class="item-icon"
-         ng-mouseenter="displayTooltip = (item !== null && item !== undefined)"
+         ng-mouseenter="prepareTooltipDisplay($event)"
          ng-mouseleave="displayTooltip = false">
         <img ng-src="{{item.icon || defaultIcon}}" ng-if="!item.missing">
         <img src="static/unknown-item.png" ng-if="item.missing">

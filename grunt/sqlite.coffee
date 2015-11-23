@@ -45,7 +45,9 @@ module.exports = (grunt) ->
                 name TEXT,
                 description TEXT,
                 size INTEGER,
-                timestamp INTEGER
+                timestamp INTEGER,
+                character INTEGER,
+                FOREIGN KEY (character) REFERENCES tCharacterCache (id) ON DELETE CASCADE
             );
 
             CREATE TABLE tFileTagRel (

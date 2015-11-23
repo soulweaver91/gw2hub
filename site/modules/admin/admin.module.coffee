@@ -85,6 +85,12 @@ angular.module 'module.admin', [
                     (Restangular, $stateParams) ->
                         Restangular.one 'media', $stateParams.id
                         .get()
+                ],
+                characters: [
+                    'Restangular',
+                    (Restangular) ->
+                        Restangular.one 'characters'
+                        .get()
                 ]
             params:
                 msg: null
@@ -259,9 +265,11 @@ angular.module 'module.admin', [
                     $scope.msg = 'failureAdded'
 ]
 .controller 'adminMediaEditController', [
-    '$scope', '$state', '$stateParams', 'Restangular', 'media', 'tagUtilityService',
-    ($scope, $state, $stateParams, Restangular, media, tagUtilityService) ->
+    '$scope', '$state', '$stateParams', 'Restangular', 'media', 'characters', 'tagUtilityService',
+    ($scope, $state, $stateParams, Restangular, media, characters, tagUtilityService) ->
         $scope.media = media
+        $scope.characters = characters.data
+        $scope.characters.unshift { id: null, name: 'Unknown or not applicable' }
         $scope.msg = $stateParams.msg
 
         $scope.selectFields = {
@@ -286,7 +294,7 @@ angular.module 'module.admin', [
 
         $scope.submitMedia = ->
             values = _.pick $scope.media, [
-                'name', 'description'
+                'name', 'description', 'character'
             ]
 
             values.tagIDs = _.pluck $scope.selectFields.selectedTags, 'id'

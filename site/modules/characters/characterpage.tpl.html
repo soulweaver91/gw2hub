@@ -1,0 +1,294 @@
+<div class="container">
+    <div class="alert alert-info" ng-if="character.deleted">
+        <span class="alert-icon"></span>
+        This character has been deleted. Most details are not available.
+    </div>
+
+    <div class="character-page-big-icons">
+        <span class="hubicon colored hubicon-attach-to-next hubicon-{{character.gender | lowercase}}"></span>
+        <span class="hubicon hubicon-huge colored hubicon-{{character.race | lowercase}}" title="{{character.race}}"></span>
+        <span class="hubicon hubicon-huge colored hubicon-{{character.profession | lowercase}}" title="{{character.profession}}"></span>
+    </div>
+    <h1>{{character.name}}</h1>
+    <p class="subtitle">
+        <span ng-if="!character.deleted">Level {{character.level}}</span>
+        {{character.race}} {{character.profession}}
+    </p>
+
+    <div class="row synced-height-columns lg-and-up">
+        <div class="col-lg-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2>Basic details</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <span class="glyphicon glyphicon-gift"></span>
+                            <strong>Birthday</strong>
+                        </div>
+                        <div class="col-xs-8">
+                            {{character.created | momentTime}}
+                        </div>
+                    </div>
+                    <div class="row" ng-if="!character.deleted">
+                        <div class="col-xs-4">
+                            <span class="glyphicon glyphicon-time"></span>
+                            <strong>Age</strong>
+                        </div>
+                        <div class="col-xs-8">
+                            {{character.age | charAge}}
+                        </div>
+                    </div>
+                    <div class="row" ng-if="!character.deleted">
+                        <div class="col-xs-4">
+                            <!-- Replace this one later with a unique icon. -->
+                            <span class="hubicon hubicon-necromancer"></span>
+                            <strong>Deaths</strong>
+                        </div>
+                        <div class="col-xs-8">
+                            {{character.deaths | number}}
+                        </div>
+                    </div>
+                    <div class="row" ng-if="!character.deleted">
+                        <div class="col-xs-4">
+                            <span class="glyphicon"></span>
+                            <strong>Crafting</strong>
+                        </div>
+                        <div class="col-xs-8">
+                    <span ng-repeat="c in character.crafting" ng-class="{'text-muted': !c.active}">
+                        <span class="hubicon hubicon-{{c.discipline | lowercase}}" title="{{c.discipline}}"></span> {{c.rating}}
+                    </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="panel panel-default" ng-if="!character.deleted">
+                <div class="panel-heading">
+                    <h2>Traits</h2>
+                </div>
+                <div class="panel-body">
+                    <ul class="nav nav-pills">
+                        <li ng-repeat="(specMode, specs) in character.specializations"
+                            ng-class="{active: mode.traitPage == specMode}">
+                            <a ng-click="mode.traitPage = specMode">{{modeNames[specMode]}}</a>
+                        </li>
+                    </ul>
+                    <div class="row">
+                        <div class="specialization-section" ng-repeat="(specMode, specs) in character.specializations" ng-show="mode.traitPage == specMode">
+                            <div class="specialization-line" ng-repeat="(idx, spec) in specs track by idx"
+                                 ng-style="{backgroundImage: 'url(' + spec.background + ')'}" ng-class="{empty: spec == null}">
+                                <h4 class="specialization-name" ng-if="spec !== null">{{spec.name}}</h4>
+                                <h4 class="specialization-name" ng-if="spec == null && specMode != 'pvp' && character.level < specUnlockLevels[idx]">Locked (Level {{specUnlockLevels[idx]}})</h4>
+                                <h4 class="specialization-name" ng-if="spec == null && (specMode == 'pvp' || character.level >= specUnlockLevels[idx])">Unused</h4>
+                                <div class="specialization-traits">
+                                    <trait-icon ng-repeat="trait in spec.traits" trait="trait"></trait-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6 col-xs-12">
+            <div class="panel panel-default" ng-if="!character.deleted">
+                <div class="panel-heading">
+                    <h2>Equipment</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="equipment-table">
+                        <div class="equipment-armor-column">
+                            <span class="equipment-label">Armor</span>
+                            <item-icon ng-if="!mode.underwater" item="itemDB[character.equipment.helm.id]" qty="1"
+                                       upgrades="character.equipment.helm.upgrades"
+                                       item-database="itemDB"></item-icon>
+                            <item-icon ng-if="mode.underwater" item="itemDB[character.equipment.breather.id]" qty="1"
+                                       upgrades="character.equipment.breather.upgrades"
+                                       item-database="itemDB"></item-icon>
+                            <item-icon item="itemDB[character.equipment.shoulders.id]" qty="1"
+                                       upgrades="character.equipment.shoulders.upgrades"
+                                       item-database="itemDB"></item-icon>
+                            <item-icon item="itemDB[character.equipment.coat.id]" qty="1"
+                                       upgrades="character.equipment.coat.upgrades"
+                                       item-database="itemDB"></item-icon>
+                            <item-icon item="itemDB[character.equipment.gloves.id]" qty="1"
+                                       upgrades="character.equipment.gloves.upgrades"
+                                       item-database="itemDB"></item-icon>
+                            <item-icon item="itemDB[character.equipment.leggings.id]" qty="1"
+                                       upgrades="character.equipment.leggings.upgrades"
+                                       item-database="itemDB"></item-icon>
+                            <item-icon item="itemDB[character.equipment.boots.id]" qty="1"
+                                       upgrades="character.equipment.boots.upgrades"
+                                       item-database="itemDB"></item-icon>
+                        </div>
+                        <div class="equipment-others-column">
+                            <div>
+                                <span class="equipment-label">Support</span>
+                                <div>
+                                    <item-icon item="itemDB[character.equipment.backpack.id]" qty="1"
+                                               upgrades="character.equipment.backpack.upgrades"
+                                               item-database="itemDB"></item-icon>
+                                    <item-icon item="itemDB[character.equipment.accessories[0].id]" qty="1"
+                                               upgrades="character.equipment.accessories[0].upgrades"
+                                               item-database="itemDB"></item-icon>
+                                    <item-icon item="itemDB[character.equipment.accessories[1].id]" qty="1"
+                                               upgrades="character.equipment.accessories[1].upgrades"
+                                               item-database="itemDB"></item-icon>
+                                </div>
+                                <div>
+                                    <item-icon item="itemDB[character.equipment.amulet.id]" qty="1"
+                                               upgrades="character.equipment.amulet.upgrades"
+                                               item-database="itemDB"></item-icon>
+                                    <item-icon item="itemDB[character.equipment.rings[0].id]" qty="1"
+                                               upgrades="character.equipment.rings[0].upgrades"
+                                               item-database="itemDB"></item-icon>
+                                    <item-icon item="itemDB[character.equipment.rings[1].id]" qty="1"
+                                               upgrades="character.equipment.rings[1].upgrades"
+                                               item-database="itemDB"></item-icon>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="equipment-label">Weapons</span>
+                                <div ng-if="!mode.underwater">
+                                    <div>
+                                        <span class="equipment-sublabel">Primary</span>
+                                        <item-icon item="itemDB[character.equipment.weapons.main[0].id]" qty="1"
+                                                   upgrades="character.equipment.weapons.main[0].upgrades"
+                                                   item-database="itemDB"></item-icon>
+                                        <item-icon item="itemDB[character.equipment.weapons.main[1].id]" qty="1"
+                                                   upgrades="character.equipment.weapons.main[1].upgrades"
+                                                   item-database="itemDB"></item-icon>
+                                    </div>
+                                    <div>
+                                        <span class="equipment-sublabel">Secondary</span>
+                                        <item-icon item="itemDB[character.equipment.weapons.secondary[0].id]" qty="1"
+                                                   upgrades="character.equipment.weapons.secondary[0].upgrades"
+                                                   item-database="itemDB"></item-icon>
+                                        <item-icon item="itemDB[character.equipment.weapons.secondary[1].id]" qty="1"
+                                                   upgrades="character.equipment.weapons.secondary[1].upgrades"
+                                                   item-database="itemDB"></item-icon>
+                                    </div>
+                                </div>
+                                <div ng-if="mode.underwater">
+                                    <div>
+                                        <span class="equipment-sublabel">Primary</span>
+                                        <item-icon item="itemDB[character.equipment.weapons.aquatic[0].id]" qty="1"
+                                                   upgrades="character.equipment.weapons.aquatic[0].upgrades"
+                                                   item-database="itemDB"></item-icon>
+                                    </div>
+                                    <div>
+                                        <span class="equipment-sublabel">Secondary</span>
+                                        <item-icon item="itemDB[character.equipment.weapons.aquatic[1].id]" qty="1"
+                                                   upgrades="character.equipment.weapons.aquatic[1].upgrades"
+                                                   item-database="itemDB"></item-icon>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="equipment-label">Tools</span>
+                                <item-icon item="itemDB[character.equipment.gathering.axe.id]" qty="1"
+                                           item-database="itemDB"></item-icon>
+                                <item-icon item="itemDB[character.equipment.gathering.pick.id]" qty="1"
+                                           item-database="itemDB"></item-icon>
+                                <item-icon item="itemDB[character.equipment.gathering.sickle.id]" qty="1"
+                                           item-database="itemDB"></item-icon>
+                            </div>
+                            <div class="equipment-type-toggler">
+                                <div class="btn-group">
+                                    <button class="btn btn-default" ng-class="{active: !mode.underwater}" ng-click="mode.underwater = false">Terrestrial</button>
+                                    <button class="btn btn-default" ng-class="{active: mode.underwater}" ng-click="mode.underwater = true">Underwater</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="equipment-data-column">
+                            <span class="equipment-label">Attributes (Main weapon)</span>
+                            <dl class="stats dl-horizontal">
+                                <dt>Power</dt>
+                                <dd>{{stats.power | number}}</dd>
+                                <dt>Precision</dt>
+                                <dd>{{stats.precision | number}}</dd>
+                                <dt>Toughness</dt>
+                                <dd>{{stats.toughness | number}}</dd>
+                                <dt>Vitality</dt>
+                                <dd>{{stats.vitality | number}}</dd>
+                                <dt>Concentration</dt>
+                                <dd>{{stats.conditionDuration | number}}</dd>
+                                <dt>Expertise</dt>
+                                <dd>{{stats.boonDuration | number}}</dd>
+                                <dt>Condition Damage</dt>
+                                <dd>{{stats.conditionDamage | number}}</dd>
+                                <dt>Ferocity</dt>
+                                <dd>{{stats.critDamage | number}}</dd>
+                                <dt>Healing Power</dt>
+                                <dd>{{stats.healingPower | number}}</dd>
+                                <dt>Armor</dt>
+                                <dd>{{stats.derived.armor | number}}</dd>
+                                <dt>Health</dt>
+                                <dd>{{stats.derived.health | number}}</dd>
+                                <dt>Critical Chance</dt>
+                                <dd>{{stats.derived.critChance | number : 2}}%</dd>
+                                <dt>Critical Damage</dt>
+                                <dd>{{stats.derived.critDamage | number : 2}}%</dd>
+                                <dt>Boon Duration</dt>
+                                <dd>+{{stats.derived.boonDuration | number : 2}}%</dd>
+                                <dt>Condition Duration</dt>
+                                <dd>+{{stats.derived.conditionDuration | number : 2}}%</dd>
+                            </dl>
+
+                            <span class="incomplete-disclaimer panel" ng-if="stats.incomplete">
+                                Some pieces of equipment seem to have selectable stats.
+                                The Guild Wars 2 API does not currently disclose the chosen stats, so they
+                                aren't taken into account in the shown attributes.
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="panel panel-default" ng-if="!character.deleted">
+                <div class="panel-heading">
+                    <h2>Inventory</h2>
+                </div>
+                <div class="panel-body dark-background">
+                    <ul class="nav nav-pills">
+                        <li ng-class="{active: mode.activeBag == null}" class="inventory-bag-selector">
+                            <a ng-click="mode.activeBag = null">
+                                <span>All</span>
+                            </a>
+                        </li>
+                        <li ng-repeat="(bidx, bag) in character.bags track by bidx"
+                            class="inventory-bag-selector"
+                            ng-class="{active: mode.activeBag == bidx}">
+                            <a ng-click="mode.activeBag = bidx"><item-icon
+                                        item="itemDB[bag.id]"
+                                        qty="1"
+                                        upgrades="null"
+                                        item-database="itemDB"></item-icon
+                            ></a>
+                        </li>
+                    </ul>
+                    <div class="inventory-bags">
+                        <div>
+                            <div class="bank"
+                                ><div class="bank-inner">
+                                        <item-icon ng-repeat="(idx, item) in character.inventory track by idx"
+                                                   item="itemDB[item.item.id]"
+                                                   qty="item.item.count"
+                                                   upgrades="item.item.upgrades"
+                                                   item-database="itemDB"
+                                                   ng-show="mode.activeBag == item.bag || mode.activeBag == null"></item-icon>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
