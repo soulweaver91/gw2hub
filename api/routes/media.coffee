@@ -75,9 +75,9 @@ module.exports = (app, db) ->
             return commonResponses.databaseError res if err?
 
             if row?
-                row = _.merge row, _.pick req.body, ['name', 'description']
+                row = _.merge row, _.pick req.body, ['name', 'description', 'character']
 
-                db.run 'UPDATE tFile SET name = ?, description = ? WHERE hash = ?', row.name, row.description, req.params.id, (err) ->
+                db.run 'UPDATE tFile SET name = ?, description = ?, character = ? WHERE hash = ?', row.name, row.description, row.character, req.params.id, (err) ->
                     return commonResponses.databaseError res if err?
 
                     # Update the tag bindings if the tag array was present

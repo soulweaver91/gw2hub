@@ -47,6 +47,23 @@
                 </ui-select>
             </div>
         </div>
+        <div class="form-group">
+            <label for="media_editor_char" class="col-xs-12 col-sm-3 control-label">Assigned character</label>
+            <div class="col-xs-12 col-sm-9">
+                <ui-select id="media_editor_char" ng-model="media.character">
+                    <ui-select-match placeholder="Please select an option...">
+                        <span class="hubicon hubicon-{{$select.selected.profession | lowercase}}"></span>
+                        <span class="hubicon hubicon-{{$select.selected.race | lowercase}}"></span>
+                        {{$select.selected.name}}
+                    </ui-select-match>
+                    <ui-select-choices repeat="character.id as character in characters | filter: $select.search track by character.id">
+                        <span class="hubicon hubicon-{{character.profession | lowercase}}"></span>
+                        <span class="hubicon hubicon-{{character.race | lowercase}}"></span>
+                        <span ng-bind-html="character.name | highlight: $select.search"></span>
+                    </ui-select-choices>
+                </ui-select>
+            </div>
+        </div>
         <div class="form-group text-center">
             <button ng-click="submitMedia()" class="btn btn-default">Save</button>
             <button ui-sref="media({hash: media.hash})" class="btn btn-default">Back to media</button>
