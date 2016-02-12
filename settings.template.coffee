@@ -61,4 +61,7 @@ module.exports = {
         # with as many privileges as you are willing to permit. If API points that the key does not allow access to
         # are required, expect the site to fail.
         officialAPIKey: ''
+        # Formats to consider as valid files for display. Make sure the file types set here can be rendered by browsers.
+        imageFormats: ['jpg', 'jpeg', 'bmp', 'png', 'gif']
+        videoFormats: ['mp4']
 }

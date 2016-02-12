@@ -113,7 +113,7 @@ module.exports = (grunt) ->
                 files: ['site/**/*.html','site/**/*.coffee', 'site/icons/*.svg']
                 tasks: ['build']
             media:
-                files: ["#{settings.localMediaLocation}/*.+(jpg|mp4)"]
+                files: ["#{settings.localMediaLocation}/*.+(#{settings.imageFormats.concat(settings.videoFormats).join '|'})"]
                 tasks: ['syncFileDB']
 
         html2js:

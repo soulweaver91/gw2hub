@@ -7,6 +7,7 @@ _ = require 'lodash'
 checksum = require 'checksum'
 moment = require 'moment'
 gm = require 'gm'
+ffmpeg = require 'fluent-ffmpeg'
 
 settings = require('../configmanager').get()
 
@@ -53,18 +54,38 @@ generateThumb = (fname, hash, cb) ->
         return cb()
 
     fs.mkdir path.join('release', settings.deployDir, 'cache'), (err) ->
+        sourceFile = path.join settings.localMediaLocation, fname
+        targetFile = path.join 'release', settings.deployDir, 'cache', "th_#{hash}.jpg"
+        tempFile = path.join 'release', settings.deployDir, 'cache', "th_#{hash}.tmp.png"
+
         if err?
             return cb err if err.code != 'EEXIST'
 
-        if path.extname(fname) == '.jpg'
-            console.log "Generating a thumbnail for #{fname}"
-            gm(path.join settings.localMediaLocation, fname)
+        if path.extname(fname).slice(1) in settings.imageFormats
+            console.log "Generating a thumbnail for #{fname} (image)"
+            gm sourceFile
             .resize 200
             .quality 90
-            .write path.join('release', settings.deployDir, 'cache', "th_#{hash}.jpg"), (err) ->
+            .write targetFile, (err) ->
                 cb err
         else
-            cb()
+            console.log "Generating a thumbnail for #{fname} (video)"
+            ffmpeg sourceFile
+            .on 'end', ->
+                gm tempFile
+                .quality 90
+                .write targetFile, (err) ->
+                    return cb err if err?
+
+                    fs.unlink tempFile, (err) ->
+                        cb err
+            .on 'error', (err) -> cb err
+            .thumbnail {
+                timemarks: ['50%']
+                size: '200x?'
+                folder: path.dirname tempFile
+                filename: path.basename tempFile
+            }
 
 updateDatabase = (current, previous, db, lastRun, cb) ->
     # Find hashes new to the db
@@ -146,7 +167,7 @@ module.exports = (grunt) ->
             db.all "SELECT hash, locator FROM tFile", (err, dbFiles) ->
                 return success false if err?
 
-                glob '*.+(jpg|mp4)', {
+                glob "*.+(#{settings.imageFormats.concat(settings.videoFormats).join '|'})", {
                     cwd: settings.localMediaLocation
                 },  (err, locNames) ->
                     return success false if err?
