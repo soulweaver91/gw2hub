@@ -37,11 +37,12 @@ angular.module 'module.media', [
                 ]
 ]
 .controller 'mediaViewController', [
-    '$scope', '$state', '$stateParams', 'user', 'media', 'character', 'authService',
-    ($scope, $state, $stateParams, user, media, character, authService) ->
+    '$scope', '$state', '$stateParams', 'user', 'media', 'character', 'authService', 'fileKindChecker',
+    ($scope, $state, $stateParams, user, media, character, authService, fileKindChecker) ->
         $scope.media = media
         $scope.character = character
-        $scope.type = if media.locator.indexOf('.jpg') > 0 then 'image' else 'movie'
+
+        $scope.type = fileKindChecker media.locator
         $scope.mediaDate = moment($scope.media.timestamp).format('lll')
         $scope.src = hubEnv.remoteMediaLocation + $scope.media.locator
 

@@ -11,10 +11,10 @@ angular.module 'service.overlay', [
                 templateUrl: 'modules/overlay/overlay.tpl.html'
                 windowClass: 'media-overlay'
                 controller: [
-                    '$scope', '$state',
-                    ($scope, $state) ->
+                    '$scope', '$state', 'fileKindChecker',
+                    ($scope, $state, fileKindChecker) ->
                         $scope.media = media
-                        $scope.type = if media.locator.indexOf('.jpg') > 0 then 'image' else 'movie'
+                        $scope.type = fileKindChecker media.locator
                         $scope.src = hubEnv.remoteMediaLocation + $scope.media.locator
 
                         $scope.openMain = ->

@@ -334,3 +334,11 @@ angular.module 'module.common', [
                 else 'Unknown user level'
 
     ]
+.constant 'fileKindChecker', (filename) ->
+    format = filename.slice filename.lastIndexOf('.') + 1
+    if format in hubEnv.imageFormats
+        'image'
+    else if format in hubEnv.videoFormats
+        'movie'
+    else
+        'unknown'
