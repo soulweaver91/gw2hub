@@ -45,5 +45,5 @@ angular.module 'module.media', [
         $scope.mediaDate = moment($scope.media.timestamp).format('lll')
         $scope.src = hubEnv.remoteMediaLocation + $scope.media.locator
 
-        $scope.userCanEdit = user.ulevel >= authService.userLevels().editor
+        $scope.userCanEdit = user?.ulevel >= authService.userLevels().editor
 ]
